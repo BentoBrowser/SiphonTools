@@ -19,4 +19,15 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
     }
   }
 
+  serialize() {
+    let save = super.serialize()
+    Object.assign(save, {initialDimensions: this.initialDimensions});
+    return save;
+  }
+
+  deserialize(serialized) {
+    super.deserialize(serialized)
+    this.initialDimensions = serialized.initialDimensions;
+  }
+
 }

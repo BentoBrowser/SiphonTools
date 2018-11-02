@@ -1,5 +1,5 @@
 {
-  "name": "siphontools",
+  "name": "siphon-tools",
   "version": "1.0.0",
   "description": "A set of tools for annotating the web with Javascript",
   "main": "index.js",
@@ -20,5 +20,12 @@
   "bugs": {
     "url": "https://github.com/BentoBrowser/SiphonTools/issues"
   },
-  "homepage": "https://github.com/BentoBrowser/SiphonTools#readme"
+  "homepage": "https://github.com/BentoBrowser/SiphonTools#readme",
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "rangy": "github:nhahn/rangy#master",
+    "uuid": "^3.3.2",
+    "xpath-dom": "^0.2.2",
+    "xpath-range": "^1.1.1"
+  }
 }

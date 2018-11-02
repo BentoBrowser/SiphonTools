@@ -30,17 +30,12 @@
    }
  }
 
-const getKeyByValue = (object, value) => {
-  return Object.keys(object).find(key => object[key] === value);
-}
-
  export default class Store {
-   constructor(user, typeMap) {
+   constructor(user, triggerMap) {
      //Save this information for later use
      this.user = user; //The current user
      const highlights = {}; //Here is our main collection of highlights
      this.highlights = new Proxy(highlights, proxyHandler) //We proxy this for easy updates :)
-     this.typeMap = typeMap //A mapping of the different serialized "types" to the different annotation
      this.init();
    }
 
@@ -61,12 +56,33 @@ const getKeyByValue = (object, value) => {
        });
      });
      this.observer.observe(document.body, mutationConfig);
+
+     //Initialize Triggers
+     Object.keys(this.triggerMap).forEach(AnnotationType => {
+       let triggers = this.triggerMap[AnnotationType]
+       triggers.forEach(triggerSet => {
+         let Trigger = triggerSet.trigger
+         triggerSet.instance = new Trigger(triggerSet, AnnotationType, this)
+         triggerSet.instance.init(input)
+       })
+     })
+   }
+
+   tearDown() {
+     this.observer.disconnect();
+     //Initialize Triggers
+     Object.keys(this.triggerMap).forEach(AnnotationType => {
+       let triggers = this.triggerMap[AnnotationType]
+       triggers.forEach(triggerSet => {
+         triggerSet.instance.tearDown()
+       })
+     })
    }
 
    saveAnnotation(annotation) {
      this.highlights[annotation.key] = annotation
      let serialized = annotation.serialize();
-     serialized.type = getKeyByValue(this.typeMap, annotation.constructor)
+     serialized.type = this.triggerMap[serialized.type]
      return serialized
    }
 
@@ -75,7 +91,7 @@ const getKeyByValue = (object, value) => {
    }
 
    importAnnotation(serialized) {
-     let type = this.typeMap[serialized.type]
+     let type = Object.keys(this.triggerMap).find(key => object[key] === value.type);
      if (!type) {
        console.error("Unrecognized annotation type!")
        return

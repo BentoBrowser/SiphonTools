@@ -13,24 +13,6 @@ export default class AnchoredAnnotation extends BaseAnnotation {
     this.text = anchor.text
   }
 
-  static anchorFromPoint(point) {
-    let leafNodes = [];
-    let height = 10
-    while (leafNodes.length < 1 && height < 200) {
-      let rect = {top: point.y,
-         bottom: point.y + height,
-         left: 0 + window.scrollX,
-         right: window.innerWidth + window.scrollX,
-         width: window.innerWidth, height: height}
-
-      leafNodes = this.filterLeafNodes(rect, true);
-      height += 10;
-    }
-
-    //Pick the most central node to anchor the text to
-    return new AnchoredAnnotation(this.closest((window.innerWidth + window.scrollX)/2,leafNodes))
-  }
-
   serialize() {
     let save = super.serialize()
     Object.assign(save, {anchorPath: this.anchorPath, text: this.text});

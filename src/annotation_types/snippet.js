@@ -9,17 +9,6 @@ export default class Snippet extends RectangularAnnotation {
     super(rect);
   }
 
-  serialize() {
-    let save = super.serialize()
-    Object.assign(save, {initialDimensions: this.initialDimensions});
-    return save;
-  }
-
-  deserialize(serialized) {
-    super.deserialize(serialized)
-    this.initialDimensions = serialized.initialDimensions;
-  }
-
   mark() {
     this.nodes.forEach(elem => {
       let style = window.getComputedStyle(elem);
