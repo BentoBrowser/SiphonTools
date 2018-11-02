@@ -19,24 +19,25 @@
        value.unmark();
        value.mark();
      }
-   }
-
+     return true;
+   },
    deleteProperty(target, prop) {
      if (prop in target) {
        let annotation = target[prop]
        annotation.unmark();
        delete target[prop];
      }
+     return true
    }
  }
 
  export default class Store {
-   constructor(user, triggerMap) {
+   constructor(user, typeMap) {
      //Save this information for later use
      this.user = user; //The current user
      const highlights = {}; //Here is our main collection of highlights
      this.highlights = new Proxy(highlights, proxyHandler) //We proxy this for easy updates :)
-     this.init();
+     this.typeMap = typeMap
    }
 
    //TODO we need to deal with the case where you have the url changing
@@ -56,33 +57,16 @@
        });
      });
      this.observer.observe(document.body, mutationConfig);
-
-     //Initialize Triggers
-     Object.keys(this.triggerMap).forEach(AnnotationType => {
-       let triggers = this.triggerMap[AnnotationType]
-       triggers.forEach(triggerSet => {
-         let Trigger = triggerSet.trigger
-         triggerSet.instance = new Trigger(triggerSet, AnnotationType, this)
-         triggerSet.instance.init(input)
-       })
-     })
    }
 
    tearDown() {
      this.observer.disconnect();
-     //Initialize Triggers
-     Object.keys(this.triggerMap).forEach(AnnotationType => {
-       let triggers = this.triggerMap[AnnotationType]
-       triggers.forEach(triggerSet => {
-         triggerSet.instance.tearDown()
-       })
-     })
    }
 
    saveAnnotation(annotation) {
      this.highlights[annotation.key] = annotation
      let serialized = annotation.serialize();
-     serialized.type = this.triggerMap[serialized.type]
+     serialized.type = Object.keys(this.typeMap).find(key => this.typeMap[key] === annotation.constructor);
      return serialized
    }
 
@@ -90,14 +74,20 @@
      delete this.highlights[annotation.key]
    }
 
+   updateAnnotation(annotation) {
+     let currentAnnotation = this.highlights[annotation.key]
+     currentAnnotation.update(annotation)
+   }
+
    importAnnotation(serialized) {
-     let type = Object.keys(this.triggerMap).find(key => object[key] === value.type);
+     let type = this.typeMap[serialized.type]
      if (!type) {
        console.error("Unrecognized annotation type!")
        return
      }
-     let annotation = Object.create(type)
+     let annotation = Object.create(type.prototype)
      annotation.deserialize(serialized)
+     this.highlights[serialized.key] = annotation
      return annotation
    }
 

@@ -17,30 +17,29 @@
 
 export default function SnippetTrigger({onTrigger}) {
   return {conditions: function(e) {
-      return e.mousedown && (e.mousedown.getModifierState("Alt") || e.mousedown.getModifierState("Meta"))
+      return e.mouseDown && (e.mousePosition.getModifierState("Alt") || e.mousePosition.getModifierState("Meta"))
     },
     onSelectionStart: function(e) {
-      document.body.appendChild(this.captureWindow);
+      document.body.appendChild(captureWindow);
       styleSheet.insertRule('::selection { background-color: inherit  !important; color: inherit  !important;}');
-    }
-    onSelctionChange: function(e) {
-      this.captureWindow.style.width = `${Math.abs(mouseStart.pageX - e.pageX)}px`;
-      this.captureWindow.style.height = `${Math.abs(mouseStart.pageY - e.pageY)}px`;
+    },
+    onSelectionChange: function({mouseDown, mousePosition}) {
+      captureWindow.style.width = `${Math.abs(mouseDown.pageX - mousePosition.pageX)}px`;
+      captureWindow.style.height = `${Math.abs(mouseDown.pageY - mousePosition.pageY)}px`;
 
-      this.captureWindow.style.top = (e.pageY >= mouseStart.pageY)? `${mouseStart.pageY}px` : `${e.pageY}px`;
-      this.captureWindow.style.left = (e.pageX >= mouseStart.pageX)? `${mouseStart.pageX}px` : `${e.pageX}px`;
+      captureWindow.style.top = (mousePosition.pageY >= mouseDown.pageY)? `${mouseDown.pageY}px` : `${mousePosition.pageY}px`;
+      captureWindow.style.left = (mousePosition.pageX >= mouseDown.pageX)? `${mouseDown.pageX}px` : `${mousePosition.pageX}px`;
     },
     onSelectionEnd: function(e) {
-      if (e.mousedown) { //In this case we still have the mouse depressed, so we gracefully cancel the selection
-        let bounding = this.captureWindow.getBoundingClientRect()
+      let selection = document.getSelection();
+      if (!e.mouseDown) { //In this case we still have the mouse depressed, so we gracefully cancel the selection
+        let bounding = captureWindow.getBoundingClientRect()
         styleSheet.removeRule(0);
         selection.empty();
         onTrigger(captureWindow, e)
       } else { //Otherwise we consider this a completed selection
-        if (styleSheet.cssRules.length > 0) {
-          styleSheet.removeRule(0);
-        }
-        this.captureWindow.remove();
+        styleSheet.removeRule(0);
+        captureWindow.remove();
       }
     }
   }

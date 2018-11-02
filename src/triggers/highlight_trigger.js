@@ -1,12 +1,12 @@
 export default function HighlightTrigger({onTrigger}) {
   return {
-    conditions: function({mousedown}) {
-      return mousedown && !(e.mousedown.getModifierState("Alt") || mousedown.getModifierState("Meta")) &&
-      ["INPUT", "TEXTAREA"].indexOf(mousedown.target.nodeName) < 0 && !mousedown.target.isContentEditable
+    conditions: function({mouseDown}) {
+      return mouseDown && !(mouseDown.getModifierState("Alt") || mouseDown.getModifierState("Meta")) &&
+      ["INPUT", "TEXTAREA"].indexOf(mouseDown.target.nodeName) < 0 && !mouseDown.target.isContentEditable
     },
     onSelectionEnd: function(e) {
       let selection = document.getSelection();
-      if (e.mouseup) { //We ended the selection because the mouse is now up
+      if (e.mouseUp) { //We ended the selection because the mouse is now up
         switch(selection.type) {
           case "Range":
             if (!selection.getRangeAt(0).toString().trim().length)

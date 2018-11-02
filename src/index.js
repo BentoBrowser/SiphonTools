@@ -6,10 +6,11 @@ import FragmentAnnotation from './annotation_types/fragment_annotation'
 import SelectionAnnotation from './annotation_types/selection_annotation'
 
 import Highlight from './annotation_types/highlight'
-import Image from './annotation_types/image'
-import Link from './annotation_types/link'
+import ImageAnnotation from './annotation_types/image_annotation'
+import LinkAnnotation from './annotation_types/link_annotation'
 import Snippet from './annotation_types/snippet'
-import Video from './annotation_types/video'
+import VideoAnnotation from './annotation_types/video_annotation'
+import PointAnnotation from './annotation_types/point_annotation'
 import Screenshot from './annotation_types/screenshot.js'
 
 import EventListener from './event_listener'
@@ -45,18 +46,18 @@ import SnippetTrigger from './triggers/snippet_trigger'
 }
 */
 
-export default Siphon = {
-  initializeTriggers: (triggers) => {
+export default {
+  initializeTriggers: function(triggers) {
     EventListener.init()
     EventListener.triggers = triggers
   },
-  tearDown: () => {
+  tearDown: function() {
     EventListener.teardown()
   }
 }
 
 export {AnchoredAnnotation, BaseAnnotation, ElementAnnotation, FragmentAnnotation, SelectionAnnotation,
-        Highlight, Image, Link, Snippet, Video, Screenshot,
-        ClickElementTrigger, DoubleTapTrigger, HighlightTrigger, HoverElementTrigger, SnippetTrigger
+        Highlight, ImageAnnotation, LinkAnnotation, Snippet, VideoAnnotation, Screenshot, PointAnnotation,
+        ClickElementTrigger, DoubleTapTrigger, HighlightTrigger, HoverElementTrigger, SnippetTrigger,
         Store
       }

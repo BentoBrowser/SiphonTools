@@ -1,18 +1,17 @@
-export default function DoubleTapTrigger(key, afterTap, {
-  delta = 500
-}) {
+export default function DoubleTapTrigger({key, afterTap, delta = 500}) {
+  let lastKeypressTime = 0
+
   return {
-    let lastKeypressTime = 0
-    conditions: function({keyup}) {
-      return keyup.key == key
+    conditions: function({keyUp}) {
+      return keyUp.key == key
     },
-    onSelectionStart: function({keyup}) {
+    onSelectionStart: function({keyUp}) {
       var thisKeypressTime = new Date();
       lastKeypressTime = thisKeypressTime;
     },
-    onSelectionEnd: function({keyup}) {
+    onSelectionEnd: function({keyUp}) {
       var thisKeypressTime = new Date();
-      if (keyup.key == key && thisKeypressTime - lastKeypressTime <= delta) {
+      if (keyUp.key == key && thisKeypressTime - lastKeypressTime <= delta) {
         afterTap()
       }
       lastKeypressTime = 0

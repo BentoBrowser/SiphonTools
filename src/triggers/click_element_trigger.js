@@ -1,11 +1,11 @@
-export default function ClickElementTrigger(elementSelector, onClick) {
+export default function ClickElementTrigger({selector, onClick}) {
   return {
-    conditions: function({mousedown}) {
-      return mousedown && mousedown.target.match(elementSelector)
+    conditions: function({mouseDown}) {
+      return mouseDown && mouseDown.target.matches(selector)
     },
-    onSelectionEnd: function({mouseup}) {
-      if (mouseup && mouseup.target.match(elementSelector))
-        onClick(mouseup.target, e)
+    onSelectionEnd: function({mouseUp}) {
+      if (mouseUp && mouseUp.target.matches(selector))
+        onClick(mouseUp.target, e)
     }
   }
 }

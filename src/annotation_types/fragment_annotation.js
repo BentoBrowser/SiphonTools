@@ -1,7 +1,7 @@
 import AnchoredAnnotation from './anchored_annotation'
 import XPath from 'xpath-dom'
 import {compact, uniq, sortBy, first} from 'lodash'
-import {computedStyleToInlineStyle, resolveHangingTags} from './inline-style'
+import {computedStyleToInlineStyle, resolveHangingTags} from '../inline-style'
 import rangyTextRange from 'rangy/lib/rangy-textrange'
 import rangy from 'rangy/lib/rangy-core.js';
 

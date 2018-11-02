@@ -2,7 +2,7 @@ import rangyClassApplier from 'rangy/lib/rangy-classapplier';
 import rangyTextRange from 'rangy/lib/rangy-textrange'
 import rangy from 'rangy/lib/rangy-core.js';
 
-import {computedStyleToInlineStyle} from './inline-style'
+import {computedStyleToInlineStyle} from '../inline-style'
 import AnchoredAnnotation from './anchored_annotation'
 import * as XPath from 'xpath-range'
 import {last} from 'lodash'

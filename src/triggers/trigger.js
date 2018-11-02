@@ -1,5 +1,5 @@
 
-export default function Trigger(...options)
+export default function Trigger({...options})
   return {
     conditions: function(e) {
       //conditions that need to be true for the selection interaction to begin and continue
@@ -8,7 +8,7 @@ export default function Trigger(...options)
     onSelectionStart: function(e) {
       //Handler that will fire when the selection begins
     }
-    onSelctionChange: function(e) {
+    onSelectionChange: function(e) {
       //Fires as new events come in (some may or my not be relevant to the selection)
     },
     onSelectionEnd: function(e) {

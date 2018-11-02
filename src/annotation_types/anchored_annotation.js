@@ -1,7 +1,7 @@
 import BaseAnnotation from './base_annotation'
 import XPath from 'xpath-dom'
 import {compact, uniq, sortBy, first} from 'lodash'
-import {computedStyleToInlineStyle, resolveHangingTags} from './inline-style'
+import {computedStyleToInlineStyle, resolveHangingTags} from '../inline-style'
 
 export default class AnchoredAnnotation extends BaseAnnotation {
   constructor(anchor) {

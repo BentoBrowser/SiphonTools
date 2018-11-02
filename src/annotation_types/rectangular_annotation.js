@@ -1,6 +1,6 @@
 import FragmentAnnotation from './fragment_annotation'
 
-export default class FragmentAnnotation extends AnchoredAnnotation {
+export default class RectangularAnnotation extends FragmentAnnotation {
 
   constructor(rect) {
     rect = {top: rect.top + window.scrollY,
