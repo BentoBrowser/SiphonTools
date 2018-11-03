@@ -7,7 +7,7 @@ import AnchoredAnnotation from './anchored_annotation'
 import * as XPath from 'xpath-range'
 import {last} from 'lodash'
 
-export default class Highlight extends AnchoredAnnotation {
+export default class SelectionAnnotation extends AnchoredAnnotation {
 
   constructor(range) {
     super();
@@ -53,7 +53,7 @@ export default class Highlight extends AnchoredAnnotation {
 
   deserialize(serialized) {
     super.deserialize(serialized);
-    this.selection = annoObject.selection;
+    this.selection = serialized.selection;
   }
 
   serialize() {

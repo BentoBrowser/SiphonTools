@@ -30,13 +30,15 @@ export default class Image extends ElementAnnotation{
 
   mark() {
     this.allReferences.forEach(ref => {
-      ref.classList.add("siphon-note-image")
+      this.element.classList.add(`siphon-image`)
+      this.element.classList.add(`siphon-annotation-${this.key}`);
     })
   }
 
   unmark() {
     this.allReferences.forEach(ref => {
-      ref.classList.remove("siphon-note-image")
+      this.element.classList.remove(`siphon-image`)
+      this.element.classList.remove(`siphon-annotation-${this.key}`)
     })
   }
 }

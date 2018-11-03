@@ -9,8 +9,8 @@ export default class AnchoredAnnotation extends BaseAnnotation {
     if (anchor) { //Ack a bit of a shortcut for highlights :(
       this.anchor = anchor
       this.anchorPath = XPath.getUniqueXPath(this.anchor, document.body);
+      this.text = anchor.text
     }
-    this.text = anchor.text
   }
 
   serialize() {

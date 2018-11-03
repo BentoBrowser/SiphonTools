@@ -21,6 +21,7 @@ import DoubleTapTrigger from './triggers/double_tap_trigger'
 import HighlightTrigger from './triggers/highlight_trigger'
 import HoverElementTrigger from './triggers/hover_element_trigger'
 import SnippetTrigger from './triggers/snippet_trigger'
+import ElementSelector from './triggers/element_selector'
 
 /* An annotation map looks like the following:
 {
@@ -53,11 +54,14 @@ export default {
   },
   tearDown: function() {
     EventListener.teardown()
+  },
+  getSelectionState: function() {
+    EventListener.getSelectionState()
   }
 }
 
 export {AnchoredAnnotation, BaseAnnotation, ElementAnnotation, FragmentAnnotation, SelectionAnnotation,
         Highlight, ImageAnnotation, LinkAnnotation, Snippet, VideoAnnotation, Screenshot, PointAnnotation,
-        ClickElementTrigger, DoubleTapTrigger, HighlightTrigger, HoverElementTrigger, SnippetTrigger,
+        ClickElementTrigger, DoubleTapTrigger, HighlightTrigger, HoverElementTrigger, SnippetTrigger, ElementSelector,
         Store
       }

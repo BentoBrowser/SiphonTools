@@ -9,8 +9,8 @@ export default class RectangularAnnotation extends FragmentAnnotation {
        right: rect.right + window.scrollX,
        width: rect.width, height: rect.height}
 
-    let leafNodes = this.filterLeafNodes(rect);
-    let nodes = this.findOptimalParents(leafNodes);
+    let leafNodes = FragmentAnnotation.filterLeafNodes(rect);
+    let nodes = FragmentAnnotation.findOptimalParents(leafNodes);
     super(nodes);
 
     this.initialDimensions = {

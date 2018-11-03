@@ -30,13 +30,15 @@ export default class Link extends ElementAnnotation{
 
   mark() {
     this.allReferences.forEach(ref => {
-      ref.classList.add("siphon-note-link")
+      this.element.classList.add(`siphon-link`)
+      this.element.classList.add(`siphon-annotation-${this.key}`);
     })
   }
 
   unmark() {
     this.allReferences.forEach(ref => {
-      ref.classList.remove("siphon-note-link")
+      this.element.classList.remove(`siphon-link`)
+      this.element.classList.remove(`siphon-annotation-${this.key}`)
     })
   }
 }

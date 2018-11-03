@@ -8,15 +8,24 @@ export default class Highlight extends SelectionAnnotation {
 
   constructor(range) {
     super(range);
-    this.markupClass = `siphon-highlight_${this.key}`;
-    this.classApplier = rangy.createClassApplier(this.markupClass, {elementTagName: 'mark'});
+    this.markupClass = 'siphon-highlight';
+    this.classApplier = rangy.createClassApplier(this.markupClass, {
+      elementTagName: 'span',
+      onElementCreate: el => {
+        el.classList.add(`siphon-annotation-${this.key}`);
+      }
+    });
   }
 
   deserialize(serialized) {
     super.deserialize(serialized);
-    this.selection = annoObject.selection;
-    this.markupClass = `siphon-highlight_${this.key}`;
-    this.classApplier = rangy.createClassApplier(this.markupClass, {elementTagName: 'mark'});
+    this.markupClass = 'siphon-highlight';
+    this.classApplier = rangy.createClassApplier(this.markupClass, {
+      elementTagName: 'span',
+      onElementCreate: el => {
+        el.classList.add(`siphon-annotation-${this.key}`);
+      }
+    });
   }
 
   mark() {

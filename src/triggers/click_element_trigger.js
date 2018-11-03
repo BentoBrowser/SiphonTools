@@ -5,7 +5,7 @@ export default function ClickElementTrigger({selector, onClick}) {
     },
     onSelectionEnd: function({mouseUp}) {
       if (mouseUp && mouseUp.target.matches(selector))
-        onClick(mouseUp.target, e)
+        onClick(mouseUp.target, mouseUp)
     }
   }
 }

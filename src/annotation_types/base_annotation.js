@@ -27,11 +27,12 @@ export default class BaseAnnotation {
     this.creator = serialized.creator
     this.creationDate = serialized.creationDate
   }
-  
+
   deserialize(serialized) {
     this.key = serialized.key
     this.rehydrated = false
-    this.comments = (serialized.comments || []).map(comment => new Comment(comment))
+    this.comments = serialized.comments
+    this.type = serialized.type
     this.creator = serialized.creator || "unknown"
     this.creationDate = serialized.creationDate || Date.now()
   }

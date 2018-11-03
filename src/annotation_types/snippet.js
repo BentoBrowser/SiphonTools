@@ -19,7 +19,8 @@ export default class Snippet extends RectangularAnnotation {
 
       //Add a tracking class to the elems
 
-      elem.classList.add(`siphon-snippet_${this.key}`);
+      elem.classList.add(`siphon-snippet`)
+      elem.classList.add(`siphon-annotation-${this.key}`);
     })
   }
 
@@ -28,7 +29,8 @@ export default class Snippet extends RectangularAnnotation {
     this.nodes.forEach(elem => {
       elem.style.borderLeft = null;
       elem.style.paddingLeft = null;
-      elem.classList.remove(`siphon-snippet_${this.key}`);
+      elem.classList.remove(`siphon-snippet`)
+      elem.classList.remove(`siphon-annotation-${this.key}`);
     })
   }
 

@@ -51,12 +51,15 @@ export default class Video extends ElementAnnotation{
   }
 
   mark() {
-    if (this.element)
-      this.element.classList.add(`siphon-video_${this.key}`)
+    if (this.element) {
+      this.element.classList.add(`siphon-video`)
+      this.element.classList.add(`siphon-annotation-${this.key}`);
+    }
   }
 
   unmark() {
     if (this.element)
-      this.element.classList.remove(`siphon-video_${this.key}`)
+      this.element.classList.remove(`siphon-video`)
+      this.element.classList.remove(`siphon-annotation-${this.key}`)
   }
 }

@@ -42,6 +42,9 @@ export default {
       return listener;
     })
   },
+  getSelectionState: function() {
+    return selectionState
+  },
   teardown: function() {
     Object.keys(currentListeners).forEach(listenerName => {
       window.removeEventListener(listenerName, currentListeners[listenerName])

@@ -11,12 +11,12 @@ export default class PointAnnotation extends AnchoredAnnotation {
          right: window.innerWidth + window.scrollX,
          width: window.innerWidth, height: height}
 
-      leafNodes = this.filterLeafNodes(rect, true);
+      leafNodes = AnchoredAnnotation.filterLeafNodes(rect, true);
       height += 10;
     }
 
     //Pick the most central node to anchor the text to
-    let anchor = this.closest((window.innerWidth + window.scrollX)/2,leafNodes)
+    let anchor = AnchoredAnnotation.closest((window.innerWidth + window.scrollX)/2,leafNodes)
     super(anchor);
   }
 

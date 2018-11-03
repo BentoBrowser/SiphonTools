@@ -8,6 +8,8 @@
   }
  */
 
+ //TODO: Could be interesting? https://github.com/Simonwep/selection
+
  let captureWindow = document.createElement('div');
  captureWindow.className = 'siphon-selection-window';
 
