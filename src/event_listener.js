@@ -1,4 +1,4 @@
-//Listens to all events from the browser so we can appropriate fire off triggers when needed
+//Listens to all events from the browser so we can appropriate fire off selectors when needed
 
 let selectionState = {
   mouseDown: false,
@@ -31,7 +31,7 @@ let events = {
 let currentListeners = {}
 
 export default {
-  triggers: [],
+  selectors: [],
   init: function() {
     currentListeners = Object.keys(events).forEach(eventName => {
       let listener = (e) => {
@@ -52,22 +52,22 @@ export default {
     currentListeners = {}
   },
   checkConditions: function() {
-    this.triggers.forEach(trigger => {
-      let isValid = trigger.conditions(selectionState)
+    this.selectors.forEach(selector => {
+      let isValid = selector.conditions(selectionState)
 
-      if (isValid && trigger.isRunning) {
-        if (trigger.onSelectionChange)
-          trigger.onSelectionChange(selectionState)
-      } else if (isValid && !trigger.isRunning) {
-        trigger.isRunning = true;
-        if (trigger.onSelectionStart)
-          trigger.onSelectionStart(selectionState)
-        if (trigger.onSelectionChange)
-          trigger.onSelectionChange(selectionState)
-      } else if (trigger.isRunning && !isValid) {
-        trigger.isRunning = false;
-        if (trigger.onSelectionEnd)
-          trigger.onSelectionEnd(selectionState)
+      if (isValid && selector.isRunning) {
+        if (selector.onSelectionChange)
+          selector.onSelectionChange(selectionState)
+      } else if (isValid && !selector.isRunning) {
+        selector.isRunning = true;
+        if (selector.onSelectionStart)
+          selector.onSelectionStart(selectionState)
+        if (selector.onSelectionChange)
+          selector.onSelectionChange(selectionState)
+      } else if (selector.isRunning && !isValid) {
+        selector.isRunning = false;
+        if (selector.onSelectionEnd)
+          selector.onSelectionEnd(selectionState)
       }
     })
   }

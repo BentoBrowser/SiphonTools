@@ -1,4 +1,4 @@
-export default function DoubleTapTrigger({key, afterTap, delta = 500}) {
+export default function DoubleTapSelector({key, afterTap, delta = 500}) {
   let lastKeypressTime = 0
 
   return {

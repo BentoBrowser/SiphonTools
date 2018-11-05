@@ -16,6 +16,14 @@ export default function ElementSelector({triggerCondition, onComplete} = {}) {
         mouseDown.preventDefault()
         mouseDown.stopPropagation()
 
+        //Determine if any of the children are in our list -- if they are remove them
+        for (let i = saveElements.length - 1; i >= 0; i--) {
+          if (highlightedElement.contains(saveElements[i])) {
+            saveElements.splice(i, 1)
+            highlightBoxes.splice(i, 1)[0].remove()
+          }
+        }
+
         saveElements.push(highlightedElement)
         highlightBoxes.push(highlightBox)
         highlightBox.style.pointerEvents = 'auto'

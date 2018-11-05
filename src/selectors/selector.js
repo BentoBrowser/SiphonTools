@@ -1,5 +1,5 @@
 
-export default function Trigger({...options})
+export default function Selector({...options})
   return {
     conditions: function(e) {
       //conditions that need to be true for the selection interaction to begin and continue

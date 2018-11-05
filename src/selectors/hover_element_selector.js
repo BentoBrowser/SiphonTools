@@ -1,4 +1,4 @@
-export default function HoverElementTrigger({selector, displayOverlay, hideOverlay}) {
+export default function HoverElementSelector({selector, displayOverlay, hideOverlay}) {
   var element = null
   return {
     conditions: function({mousePosition}) {

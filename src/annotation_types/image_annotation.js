@@ -2,21 +2,35 @@ import ElementAnnotation from './element_annotation'
 
 export default class Image extends ElementAnnotation{
 
-  constructor(imageNode) {
-    super(imageNode);
+  constructor(imageNode, cropping) {
+    super(imageNode); //Rect should be an object with
     this.src = imageNode.src
     this.allReferences = Array.from(document.querySelectorAll('img')).filter(elem => elem.src == this.src)
+    this.cropping = null
+    this.renderedDimensions = {
+      height: imageNode.clientHeight,
+      width: imageNode.clientWidth
+    }
+    if (cropping) { //Rect is an optional cropping we have for the image
+      this.cropping = {
+        left: rect.left || 0,
+        right: rect.right || 0,
+        top: rect.top || 0,
+        bottom: rect.bottom || 0
+      }
+    }
   }
 
   serialize() {
     let save = super.serialize()
-    Object.assign(save, {src: this.src})
+    Object.assign(save, {src: this.src, cropping: this.cropping})
     return save;
   }
 
   deserialize(serialized) {
     super.deserialize(serialized)
     this.src = serialized.src
+    this.cropping = serialized.cropping
   }
 
   rehydrate() {

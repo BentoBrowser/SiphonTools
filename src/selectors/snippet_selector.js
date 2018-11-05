@@ -17,7 +17,7 @@
  document.head.appendChild(styleElem);
  var styleSheet = styleElem.sheet;
 
-export default function SnippetTrigger({onTrigger}) {
+export default function SnippetSelector({onTrigger}) {
   return {conditions: function(e) {
       return e.mouseDown && (e.mousePosition.getModifierState("Alt") || e.mousePosition.getModifierState("Meta"))
     },

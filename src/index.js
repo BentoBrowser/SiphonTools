@@ -16,17 +16,17 @@ import Screenshot from './annotation_types/screenshot.js'
 import EventListener from './event_listener'
 import Store from './store'
 
-import ClickElementTrigger from './triggers/click_element_trigger'
-import DoubleTapTrigger from './triggers/double_tap_trigger'
-import HighlightTrigger from './triggers/highlight_trigger'
-import HoverElementTrigger from './triggers/hover_element_trigger'
-import SnippetTrigger from './triggers/snippet_trigger'
-import ElementSelector from './triggers/element_selector'
+import ClickElementSelector from './selectors/click_element_selector'
+import DoubleTapSelector from './selectors/double_tap_selector'
+import HighlightSelector from './selectors/highlight_selector'
+import HoverElementSelector from './selectors/hover_element_selector'
+import SnippetSelector from './selectors/snippet_selector'
+import ElementSelector from './selectors/element_selector'
 
 /* An annotation map looks like the following:
 {
 
-  triggers: [
+  selectors: [
     conditions: function(e) {
       //conditions that need to be true for the selection interaction to begin and continue
       //Should return a boolean
@@ -48,9 +48,9 @@ import ElementSelector from './triggers/element_selector'
 */
 
 export default {
-  initializeTriggers: function(triggers) {
+  initializeSelectors: function(selectors) {
     EventListener.init()
-    EventListener.triggers = triggers
+    EventListener.selectors = selectors
   },
   tearDown: function() {
     EventListener.teardown()
@@ -62,6 +62,6 @@ export default {
 
 export {AnchoredAnnotation, BaseAnnotation, ElementAnnotation, FragmentAnnotation, SelectionAnnotation,
         Highlight, ImageAnnotation, LinkAnnotation, Snippet, VideoAnnotation, Screenshot, PointAnnotation,
-        ClickElementTrigger, DoubleTapTrigger, HighlightTrigger, HoverElementTrigger, SnippetTrigger, ElementSelector,
+        ClickElementSelector, DoubleTapSelector, HighlightSelector, HoverElementSelector, SnippetSelector, ElementSelector,
         Store
       }

@@ -1,4 +1,4 @@
-export default function HighlightTrigger({onTrigger}) {
+export default function HighlightSelector({onTrigger}) {
   return {
     conditions: function({mouseDown}) {
       return mouseDown && !(mouseDown.getModifierState("Alt") || mouseDown.getModifierState("Meta")) &&
