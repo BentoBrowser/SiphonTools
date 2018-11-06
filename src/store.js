@@ -32,9 +32,8 @@
  }
 
  export default class Store {
-   constructor(user, typeMap) {
+   constructor(typeMap) {
      //Save this information for later use
-     this.user = user; //The current user
      const annotations = {}; //Here is our main collection of annotations
      this.annotations = new Proxy(annotations, proxyHandler) //We proxy this for easy updates :)
      this.typeMap = typeMap

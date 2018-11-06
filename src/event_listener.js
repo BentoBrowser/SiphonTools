@@ -8,7 +8,10 @@ let selectionState = {
   previousKey: false,
   pointerDown: false,
   pointerUp: false,
-  pointerPosition: false
+  pointerPosition: false,
+  touchStart: false,
+  touchEnd: false,
+  touchPosition: false
 }
 
 let events = {
