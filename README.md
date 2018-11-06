@@ -44,10 +44,14 @@ The second part is setting up the selectors. It is up to you, the end user, to d
 In reality, the above configuration would be insufficient for most applications. The main reason has to do with the provided `Store` class -- as it's written, it would only store information in memory for the page, which wouldn't allow you to take full advantage of SiphonTool's ability to serialize and restore annotations on a page.
 
 The store class, however, does make it fairly simple to manage these annotations and connect them to a datasource. The main methods for doing this are:
--  `init()` - Called when you want to initize the store. A good place to put any database connection items. Remember to call `super.init()!`
+-  `init()` - Called when you want to initize the store. A good place to put any database connection items. Remember to call `super.init()`!
 - `saveAnnotation(annotation_obj)` - Called when you want to serialize and store an annotation. The current method just returns the serialized version of an annotation object
 - `removeAnnotation(annotation_obj)` - Called to remove an annotation from the store
 - `updateAnnotation(serialized_annotation)` - Called to update an existing annotation object with a new serialzed version of it
 - `importAnnotation(serialized_annotation)` - How we can import the saved annotations created using the `saveAnnotation` method. Takes a serialzed annotation object, saves it into the store, and returns the deserilized, javasvcript object version of it. 
 
 In your implimentation, it's best to extend this base store class, and override these methods as needed to connect to your database. Most of them return something useful in their current implimentation, so be sure to call `super`!
+
+## More Details or Extending SiphonTools
+
+For additional details about the provided annotation types and selectors, or to create your own selector or annotation implimentations, please check out the [Wiki](https://github.com/BentoBrowser/SiphonTools/wiki)
