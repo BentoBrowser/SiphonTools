@@ -35,22 +35,39 @@
    constructor(user, typeMap) {
      //Save this information for later use
      this.user = user; //The current user
-     const highlights = {}; //Here is our main collection of highlights
-     this.highlights = new Proxy(highlights, proxyHandler) //We proxy this for easy updates :)
+     const annotations = {}; //Here is our main collection of annotations
+     this.annotations = new Proxy(annotations, proxyHandler) //We proxy this for easy updates :)
      this.typeMap = typeMap
+     this.url = window.location.href.split('#')[0] //Remove the hash
+     let pushState = window.history.pushState
+     window.history.pushState = () => {
+      pushState.apply(history, arguments);
+      let url = window.location.href.split('#')[0] //Remove the hash
+      if (url != this.url) {
+        this.onURLChanged(url)
+      }
+      this.url = url
+     };
+     window.addEventListener("popstate", (event) => {
+       let url = window.location.href.split('#')[0] //Remove the hash
+       if (url != this.url) {
+         this.onURLChanged(url)
+       }
+       this.url = url
+     })
    }
 
    //TODO we need to deal with the case where you have the url changing
    //due to javascript
 
    init() {
-     //Setup a mutation observer to constantly try and find missing highlights as
+     //Setup a mutation observer to constantly try and find missing annotations as
      //Javascript might change out page structure
      let mutationConfig = { childList: true, subtree: true };
      this.observer = new MutationObserver((mutations) => {
-       //We have a mutation! Find those missing highlights
-       Object.keys(this.highlights).forEach((key) => {
-         let annotation = this.highlights[key];
+       //We have a mutation! Find those missing annotations
+       Object.keys(this.annotations).forEach((key) => {
+         let annotation = this.annotations[key];
          if (!annotation.rehydrated) {
            annotation.rehydrated = annotation.rehydrate();
          }
@@ -63,19 +80,24 @@
      this.observer.disconnect();
    }
 
+   onURLChanged(newUrl) {
+     //NO-OP right now
+   }
+
    saveAnnotation(annotation) {
-     this.highlights[annotation.key] = annotation
+     this.annotations[annotation.key] = annotation
      let serialized = annotation.serialize();
      serialized.type = Object.keys(this.typeMap).find(key => this.typeMap[key] === annotation.constructor);
+     serialized.url = this.url
      return serialized
    }
 
    removeAnnotation(annotation) {
-     delete this.highlights[annotation.key]
+     delete this.annotations[annotation.key]
    }
 
    updateAnnotation(annotation) {
-     let currentAnnotation = this.highlights[annotation.key]
+     let currentAnnotation = this.annotations[annotation.key]
      currentAnnotation.update(annotation)
    }
 
@@ -87,7 +109,7 @@
      }
      let annotation = Object.create(type.prototype)
      annotation.deserialize(serialized)
-     this.highlights[serialized.key] = annotation
+     this.annotations[serialized.key] = annotation
      return annotation
    }
 

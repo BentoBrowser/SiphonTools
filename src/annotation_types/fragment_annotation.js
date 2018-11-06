@@ -49,4 +49,29 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
     return this.nodes.length === this.paths.length;
   }
 
+  mark() {
+    this.nodes.forEach(elem => {
+      let style = window.getComputedStyle(elem);
+      if (parseInt(style.paddingLeft) < 5) {
+        elem.style.paddingLeft = '5px';
+      }
+      elem.style.borderLeft = "5px double orange";
+
+      //Add a tracking class to the elems
+
+      elem.classList.add(`siphon-snippet`)
+      elem.classList.add(`siphon-annotation-${this.key}`);
+    })
+  }
+
+  unmark() {
+    super.unmark();
+    this.nodes.forEach(elem => {
+      elem.style.borderLeft = null;
+      elem.style.paddingLeft = null;
+      elem.classList.remove(`siphon-snippet`)
+      elem.classList.remove(`siphon-annotation-${this.key}`);
+    })
+  }
+
 }

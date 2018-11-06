@@ -39,10 +39,13 @@ export default class Video extends ElementAnnotation{
     } else if (url.host.endsWith("twitch.tv")) {
       this.video_id = path[path.length - 1] //Note will only be numeric when just a video
       this.provider = url.pathname.contains("videos/")? "twitch_video" : "twitch_live"
-      this.thumbnail = capture(videoNode, 500 / Math.max(videoNode.videoWidth, videoNode.videoHeight)).toDataURL('image/jpeg')
+			//Unfortunately doesn't work because of HTML5 restrictions :(((
+			//videoNode.crossOrigin = "Anonymous";
+      //this.thumbnail = capture(videoNode, 500 / Math.max(videoNode.videoWidth, videoNode.videoHeight)).toDataURL('image/jpeg')
     } else {
       //Use our html5 capture to make a data url for the thumbnail instead
-      this.thumbnail = capture(videoNode, 500 / Math.max(videoNode.videoWidth, videoNode.videoHeight)).toDataURL('image/jpeg')
+			//videoNode.crossOrigin = "Anonymous";
+      //this.thumbnail = capture(videoNode, 500 / Math.max(videoNode.videoWidth, videoNode.videoHeight)).toDataURL('image/jpeg')
     }
     this.src = videoNode.src
   }

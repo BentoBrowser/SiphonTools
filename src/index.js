@@ -56,7 +56,7 @@ export default {
     EventListener.teardown()
   },
   getSelectionState: function() {
-    EventListener.getSelectionState()
+    return EventListener.getSelectionState()
   }
 }
 

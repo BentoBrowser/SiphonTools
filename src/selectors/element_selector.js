@@ -74,7 +74,7 @@ export default function ElementSelector({triggerCondition, onComplete} = {}) {
         highlightedElement = null
       }
 
-      if (onComplete)
+      if (onComplete && saveElements.length)
         onComplete(saveElements, highlightBoxes, e)
     }
   }
