@@ -20,7 +20,7 @@ SiphonTools provides a number of common versions of these different items. A sim
 import SiphonTools from 'siphon-tools'
 import {Highlight, HighlightSelector, Store} from 'siphon-tools'
 
-let store = new Store("user123", {
+let store = new Store({
   "Highlight": Highlight
  })
  store.init();
