@@ -10,6 +10,7 @@ export default class AnchoredAnnotation extends BaseAnnotation {
       this.anchor = anchor
       this.anchorPath = XPath.getUniqueXPath(this.anchor, document.body);
       this.text = anchor.text
+      this.refreshAnchorCoordinates()
     }
   }
 

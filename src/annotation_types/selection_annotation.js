@@ -49,6 +49,7 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
       width: rect.width,
       height: rect.height
     }
+    this.refreshAnchorCoordinates()
   }
 
   deserialize(serialized) {
