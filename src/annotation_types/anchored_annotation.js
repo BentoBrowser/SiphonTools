@@ -108,7 +108,7 @@ export default class AnchoredAnnotation extends BaseAnnotation {
     var threshold = 0.9;
     var filteredNodes = [];
     if (touchingNodes.length) {
-      while(filteredNodes.length < 1) {
+      while(filteredNodes.length < 1 && threshold > 0.5) {
         filteredNodes = touchingNodes.filter(node => node.intersection / node.areaChild >= threshold)
         threshold -= 0.05;
       }
