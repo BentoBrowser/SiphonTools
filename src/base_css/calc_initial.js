@@ -124,11 +124,12 @@ var initialStyles = {}
 tags.forEach(tag => {
 	let elem = document.createElement(tag);
 	document.body.appendChild(elem);
-	let unsetStyle = window.getComputedStyle(elem);
-	for (let i = 0; i < unsetStyle.length; i++) {
-		let property = unsetStyle.item(i);
-		elem.style[property] = "initial";
-    }
+	elem.style.display = 'none'
+	//let unsetStyle = window.getComputedStyle(elem);
+	// for (let i = 0; i < unsetStyle.length; i++) {
+	// 	let property = unsetStyle.item(i);
+	// 	elem.style[property] = "initial";
+  //   }
 	let initialStyle = window.getComputedStyle(elem);
 	let initial = {}
 	for (let i = 0; i < initialStyle.length; i++) {
@@ -137,5 +138,24 @@ tags.forEach(tag => {
     }
 	initialStyles[tag] = initial;
 })
+
+let elem = document.createElement("div");
+document.body.appendChild(elem);
+elem.style.display = 'none'
+let initialStyle = window.getComputedStyle(elem, "::before");
+let initial = {}
+for (let i = 0; i < initialStyle.length; i++) {
+	let property = initialStyle.item(i);
+	initial[property] = initialStyle.getPropertyValue(property);
+	}
+initialStyles["::before"] = initial;
+
+initialStyle = window.getComputedStyle(elem, "::after");
+initial = {}
+for (let i = 0; i < initialStyle.length; i++) {
+	let property = initialStyle.item(i);
+	initial[property] = initialStyle.getPropertyValue(property);
+	}
+initialStyles["::after"] = initial;
 
 copy(JSON.stringify(initialStyles, null, 2));

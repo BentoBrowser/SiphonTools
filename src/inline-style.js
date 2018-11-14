@@ -4,6 +4,7 @@ import initialValues from './base_css/initialValues'
 function resolveHangingTags(originalNodes, cloneNodes) {
   originalNodes = originalNodes.slice(0);
   cloneNodes = cloneNodes.slice(0);
+  let style = ""
 
   for (let i = 0; i < cloneNodes.length; i++) {
     let clone = cloneNodes[i];
@@ -13,6 +14,7 @@ function resolveHangingTags(originalNodes, cloneNodes) {
     let parents = findProperParents(elem, clone);
     //replace this node with the appropriate "top level" parent
     cloneNodes[i] = last(parents.clones);
+    style += parents.style
 
     //In the rest of our nodes
     for (let j = i + 1; j < cloneNodes.length; j++) {
@@ -31,7 +33,7 @@ function resolveHangingTags(originalNodes, cloneNodes) {
           } else { //Otherwise we need to find the appropriate parent elements up to this one
             let addParents = getNodesToParents(originalNodes[j], cloneNodes[j], parent)
             parents.clones[v].appendChild(last(addParents.clones));
-
+            style += addParents.style
             //We want to keep any new elements found around
             parents.elems.unshift(...addParents.elems);
             parents.clones.unshift(...addParents.clones);
@@ -46,30 +48,33 @@ function resolveHangingTags(originalNodes, cloneNodes) {
       }
     }
   }
-  return cloneNodes;
+  return {cloneNodes, style};
 }
 
 function getNodesToParents(elem, clone, parent) {
   let elems = [];
   let clones = [];
+  let style = ""
 
   while (elem.parentElement != parent) {
     let parent = elem.parentElement;
-    let parentClone = computedStyleToInlineStyle(parent, {clone: true, recursive: false});
-    parentClone.appendChild(clone);
+    let {element, styleInfo} = computedStyleToInlineStyle(parent, {clone: true, recursive: false});
+    element.appendChild(clone);
     elems.push(parent);
-    clones.push(parentClone);
+    clones.push(element);
+    style += styleInfo
 
-    clone = parentClone;
+    clone = element;
     elem = parent;
   }
 
-  return {elems, clones}
+  return {elems, clones, style}
 }
 
 function findProperParents(elem, clone) {
   let elems = [elem];
   let clones = [clone];
+  let style = ""
 
   while(true) {
     //If we found the parent we want
@@ -82,18 +87,34 @@ function findProperParents(elem, clone) {
         .includes(elem.tagName.toLowerCase())) { //We have a list item, find the parent
 
       let parent = elem.parentElement;
-      let parentClone = computedStyleToInlineStyle(parent, {clone: true, recursive: false});
+      let {element, styleInfo} = computedStyleToInlineStyle(parent, {clone: true, recursive: false});
       //Append the previous child clone to the parent
-      parentClone.appendChild(last(clones));
+      element.appendChild(last(clones));
       elems.push(parent);
-      clones.push(parentClone);
+      clones.push(element);
+      style += styleInfo
       elem = parent;
     } else {
       break;
     }
   }
 
-  return {elems, clones};
+  return {elems, clones, style};
+}
+
+function jsNameToCssName(name)
+{
+    return name.replace(/([A-Z])/g, "-$1").toLowerCase();
+}
+
+function randomCSSClass() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+  for (var i = 0; i < 8; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
 }
 
 //Partially from https://github.com/lukehorvat/computed-style-to-inline-style
@@ -109,6 +130,7 @@ function computedStyleToInlineStyle(element, options = {}) {
         clone = element.cloneNode(recursive);
       }
     }
+    let styleInfo = "";
 
     if (recursive) {
       Array.prototype.map.call(element.children, function(child, idx) {
@@ -116,12 +138,27 @@ function computedStyleToInlineStyle(element, options = {}) {
         if (clone) {
           newOptions.clone = clone.children[idx];
         }
-        computedStyleToInlineStyle(child, newOptions);
+        let ret = computedStyleToInlineStyle(child, newOptions);
+        styleInfo += ret.styleInfo
       });
     }
 
     var computedStyle = window.getComputedStyle(element);
     let display = computedStyle.display;
+
+    //Let's determine if we have any pseudo elements by looking at their computed
+    //height and width properties
+    var beforeElement = window.getComputedStyle(element, "::before")
+    var afterElement = window.getComputedStyle(element, "::after")
+    var saveBefore, saveAfter;
+    if (afterElement.width != "auto" || afterElement.height != "auto") {
+      //Record the after element parameters, and save it to be inserted with a CSS style object
+      saveAfter = true
+    }
+    if (beforeElement.width != "auto" || beforeElement.width != "auto") {
+      //Record the after element parameters, and save it to be inserted with a CSS style object
+      saveBefore = true
+    }
 
     //Set display to 'none' to get the "used" styles instead of calculated ones
     element.style.display = 'none';
@@ -143,27 +180,64 @@ function computedStyleToInlineStyle(element, options = {}) {
       }
     }
 
+    let cssClass = randomCSSClass()
+    if (saveBefore) {
+      computedStyle = window.getComputedStyle(element, "::before");
+      styleInfo += `.${cssClass}::before {\n`
+      for (var i = 0; i < computedStyle.length; i++) {
+        var property = computedStyle.item(i);
+        if (!properties || properties.indexOf(property) >= 0) {
+          var value = computedStyle.getPropertyValue(property);
+
+          //Only save values that aren't the initial ones for the element
+          if (initialValues["::before"] &&  initialValues["::before"][property] != value) {
+            styleInfo += `${jsNameToCssName(property)}: ${value};\n`
+          }
+        }
+      }
+      styleInfo += "}\n"
+    }
+    if (saveAfter) {
+      computedStyle = window.getComputedStyle(element, "::after");
+      styleInfo += `.${cssClass}::after {\n`
+      for (var i = 0; i < computedStyle.length; i++) {
+        var property = computedStyle.item(i);
+        if (!properties || properties.indexOf(property) >= 0) {
+          var value = computedStyle.getPropertyValue(property);
+
+          //Only save values that aren't the initial ones for the element
+          if (initialValues["::after"] &&  initialValues["::after"][property] != value) {
+            styleInfo += `${jsNameToCssName(property)}: ${value};\n`
+          }
+        }
+      }
+      styleInfo += "}\n"
+    }
+    if (saveBefore || saveAfter) {
+      if (clone)
+        clone.classList.add(cssClass)
+      else
+        element.classList.add(cssClass)
+    }
+
     if (clone) {
       element.style.display = null;
       clone.style.display = display;
 
-      //TODO possibly expand this to work with all attributes with a relative URL?
+      //Make sure we get the absolute URL saved
       if (clone.hasAttribute("src")) {
-        let resolved = new URL(clone.getAttribute("src"), window.location.href);
-        clone.setAttribute("src", resolved.href)
+        clone.setAttribute("src", element.src)
       }
 
       if (clone.hasAttribute("href")) {
-        let resolved = new URL(clone.getAttribute("href"), window.location.href);
-        clone.setAttribute("href", resolved.href)
+        clone.setAttribute("href", element.href)
       }
 
-      return clone;
+      return {element: clone, styleInfo};
+    } else {
+      element.style.display = display;
+      return {element, styleInfo};
     }
-
-    element.style.display = display;
-    return element;
-
   };
 
 export {resolveHangingTags, findProperParents, computedStyleToInlineStyle}

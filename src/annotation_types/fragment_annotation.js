@@ -14,9 +14,19 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
     this.text = this.nodes.map(elem => rangy.innerText(elem)).join("\n");
 
     //Inline the styles to html
-    let inlineNodes = this.nodes.map(node => computedStyleToInlineStyle(node, {recursive: true, clone: true}))
-    let resolved = resolveHangingTags(this.nodes, inlineNodes.slice(0));
+    let resolvedStyles = ""
+    let inlineNodes = this.nodes.map(node => {
+      let {element, styleInfo} = computedStyleToInlineStyle(node, {recursive: true, clone: true})
+      resolvedStyles += styleInfo
+      return element
+    })
+    let {cloneNodes: resolved, style} = resolveHangingTags(this.nodes, inlineNodes.slice(0));
+    resolvedStyles += style
     this.html = resolved.map(elem => elem.outerHTML);
+    resolvedStyles = resolvedStyles.trim()
+    if (resolvedStyles.length) {
+      this.html.push(`<style>${resolvedStyles}</style>`)
+    }
     let headerNodes = [];
     this.nodes.forEach(node => {
       if (node.tagName.toLowerCase().match(/^h[1-6]$/))

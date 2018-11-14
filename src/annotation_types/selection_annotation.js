@@ -16,7 +16,7 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
     this.selection = XPath.fromRange(this.range, window.document.body);
 
     //Get the actual HTML
-    this.range.getNodes([1]).forEach(node => computedStyleToInlineStyle(node, {recursive: true}));
+    this.range.getNodes([1]).forEach(node => computedStyleToInlineStyle(node, {recursive: true}).element);
     let elem = document.createElement('div');
     elem.appendChild(this.range.cloneContents())
     this.html = elem.innerHTML;
