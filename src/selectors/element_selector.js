@@ -1,5 +1,9 @@
+var defaultTrigger = function({currentKey}) {
+  return currentKey && currentKey.key == "Shift"
+         && ["INPUT", "TEXTAREA"].indexOf(currentKey.target.nodeName) < 0 && !currentKey.target.isContentEditable
+}
 
-export default function ElementSelector({triggerCondition, onComplete} = {}) {
+export default function ElementSelector({trigger = defaultTrigger, onComplete} = {}) {
   var saveElements = []
   var highlightBoxes = []
 
@@ -7,10 +11,7 @@ export default function ElementSelector({triggerCondition, onComplete} = {}) {
   var highlightBox = null
 
   return {
-    conditions: function({currentKey}) {
-      return currentKey && currentKey.key == "Shift"
-             && ["INPUT", "TEXTAREA"].indexOf(currentKey.target.nodeName) < 0 && !currentKey.target.isContentEditable
-    },
+    conditions: trigger,
     onSelectionChange: function({mouseDown, mousePosition}) {
       if (mouseDown && highlightedElement) {
         mouseDown.preventDefault()

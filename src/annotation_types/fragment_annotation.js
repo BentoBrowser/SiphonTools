@@ -27,6 +27,8 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
     if (resolvedStyles.length) {
       this.html.push(`<style>${resolvedStyles}</style>`)
     }
+    //Also try and find any fonts we should try and include??
+    //TODO
     let headerNodes = [];
     this.nodes.forEach(node => {
       if (node.tagName.toLowerCase().match(/^h[1-6]$/))

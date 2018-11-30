@@ -191,6 +191,17 @@ function computedStyleToInlineStyle(element, options = {}) {
 
           //Only save values that aren't the initial ones for the element
           if (initialValues["::before"] &&  initialValues["::before"][property] != value) {
+            if (property == "content") { //We need to escape content appropriately
+              var ret = '"'
+              for (let i = 1; i < value.length - 1; i++) {
+                let charCode = value.charCodeAt(i)
+                if (charCode < 128)
+                  ret += value.substr(i, i+1)
+                else
+                  ret += "\\" + charCode.toString(16)
+              }
+              value = ret + '"'
+            }
             styleInfo += `${jsNameToCssName(property)}: ${value};\n`
           }
         }
@@ -207,6 +218,17 @@ function computedStyleToInlineStyle(element, options = {}) {
 
           //Only save values that aren't the initial ones for the element
           if (initialValues["::after"] &&  initialValues["::after"][property] != value) {
+            if (property == "content") { //We need to escape content appropriately
+              var ret = '"'
+              for (let i = 1; i < value.length - 1; i++) {
+                let charCode = value.charCodeAt(i)
+                if (charCode < 128)
+                  ret += value.substr(i, i+1)
+                else
+                  ret += "\\" + charCode.toString(16)
+              }
+              value = ret + '"'
+            }
             styleInfo += `${jsNameToCssName(property)}: ${value};\n`
           }
         }

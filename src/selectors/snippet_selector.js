@@ -17,9 +17,15 @@
  document.head.appendChild(styleElem);
  var styleSheet = styleElem.sheet;
 
-export default function SnippetSelector({onTrigger}) {
-  return {conditions: function(e) {
-      return e.mouseDown && (e.mousePosition.getModifierState("Alt") || e.mousePosition.getModifierState("Meta"))
+const defaultTrigger = function(e) {
+  return e.mousePosition.getModifierState("Alt")
+   //  || e.mousePosition.getModifierState("Meta") Used to allow meta, but causes issues with new tab interaction
+}
+
+export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
+  return {
+    conditions: function(e) {
+      return trigger(e) && e.mouseDown
     },
     onSelectionStart: function(e) {
       document.body.appendChild(captureWindow);

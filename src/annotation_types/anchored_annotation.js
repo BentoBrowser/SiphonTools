@@ -83,23 +83,23 @@ export default class AnchoredAnnotation extends BaseAnnotation {
             return;
 
           while(style.display.indexOf("inline") >= 0) {
+            let rect = this.getAdjustedRect(elem, style, includePadding);
+
+            //Ignore empty elems
+            let areaChild = rect.width * rect.height;
+            if (areaChild <= 0)
+              return;
+
+            let areaSelection = (bottom - top) * (right - left);
+            //Calculate intersection + union of leaf (@see https://stackoverflow.com/questions/9324339/how-much-do-two-rectangles-overlap)
+            let SI = Math.max(0, Math.min(rect.right, right) - Math.max(rect.left, left)) * Math.max(0, Math.min(rect.bottom, bottom) - Math.max(rect.top, top));
+            //let SU = areaChild + areaSelection - SI;
+            if (SI > 0) //Just get any elements where there is an intersection
+              nodes.push({elem: elem, intersection: SI, areaChild: areaChild, style: style});
+
             elem = elem.parentElement;
             style = window.getComputedStyle(elem);
           }
-
-          let rect = this.getAdjustedRect(elem, style, includePadding);
-
-          //Ignore empty elems
-          let areaChild = rect.width * rect.height;
-          if (areaChild <= 0)
-            return;
-
-          let areaSelection = (bottom - top) * (right - left);
-          //Calculate intersection + union of leaf (@see https://stackoverflow.com/questions/9324339/how-much-do-two-rectangles-overlap)
-          let SI = Math.max(0, Math.min(rect.right, right) - Math.max(rect.left, left)) * Math.max(0, Math.min(rect.bottom, bottom) - Math.max(rect.top, top));
-          //let SU = areaChild + areaSelection - SI;
-          if (SI > 0) //Just get any elements where there is an intersection
-            nodes.push({elem: elem, intersection: SI, areaChild: areaChild});
         }
       })
       return nodes;
@@ -108,7 +108,9 @@ export default class AnchoredAnnotation extends BaseAnnotation {
     var threshold = 0.9;
     var filteredNodes = [];
     if (touchingNodes.length) {
-      while(filteredNodes.length < 1 && threshold > 0.5) {
+      while((filteredNodes.length < 1 || filteredNodes.filter((e) => e.style.display.indexOf("inline") >= 0).length > 0 )
+             && threshold > 0.5) { //So while we have a no good matching nodes OR those nodes are only inline elements
+                                   // And we're below our threshold, we keep expanding our search radius (aka fuzziness of overlapping area of intersection + area)
         filteredNodes = touchingNodes.filter(node => node.intersection / node.areaChild >= threshold)
         threshold -= 0.05;
       }
