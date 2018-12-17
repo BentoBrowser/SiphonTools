@@ -8,6 +8,11 @@ export default class ElementAnnotation extends AnchoredAnnotation {
     super(element);
     this.element = element
     this.path = XPath.getUniqueXPath(element, document.body)
+    let bounding = element.getBoundingClientRect()
+    this.renderedDimensions = {
+      height: bounding.height,
+      width: bounding.width
+    }
   }
 
   deserialize(serialized) {
@@ -17,7 +22,7 @@ export default class ElementAnnotation extends AnchoredAnnotation {
 
   serialize() {
     let save = super.serialize()
-    Object.assign(save, {path: this.path})
+    Object.assign(save, {path: this.path, renderedDimensions: this.renderedDimensions})
     return save;
   }
 

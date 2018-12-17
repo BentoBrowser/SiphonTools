@@ -7,10 +7,6 @@ export default class Image extends ElementAnnotation{
     this.src = imageNode.src
     this.allReferences = Array.from(document.querySelectorAll('img')).filter(elem => elem.src == this.src)
     this.cropping = null
-    this.renderedDimensions = {
-      height: imageNode.clientHeight,
-      width: imageNode.clientWidth
-    }
     if (cropping) { //Rect is an optional cropping we have for the image
       this.cropping = {
         left: rect.left || 0,

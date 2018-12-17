@@ -49,6 +49,11 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
       width: rect.width,
       height: rect.height
     }
+    rect = context.getBoundingClientRect()
+    this.renderedDimensions = {
+      width: rect.width,
+      height: rect.height
+    }
     this.refreshAnchorCoordinates()
   }
 
@@ -60,7 +65,7 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
   serialize() {
     let save = super.serialize()
     Object.assign(save, {selection: this.selection, contextHtml: this.contextHTML, contextText: this.contextText,
-                        html: this.html, initialDimensions: this.initialDimensions})
+                        html: this.html, initialDimensions: this.initialDimensions, renderedDimensions: this.renderedDimensions})
     return save;
   }
 

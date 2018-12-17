@@ -13,6 +13,17 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
     this.paths = this.nodes.map((elem) => XPath.getUniqueXPath(elem, document.body));
     this.text = this.nodes.map(elem => rangy.innerText(elem)).join("\n");
 
+    this.renderedDimensions = nodes.map(node => node.getBoundingClientRect()).reduce((finalRect, currRect) => {
+      return {
+        top: Math.min(finalRect.top, currRect.top),
+        left: Math.min(finalRect.left, currRect.left),
+        bottom: Math.max(finalRect.bottom, currRect.bottom),
+        right: Math.max(finalRect.right, currRect.right)
+      }
+    })
+    this.renderedDimensions.width = this.renderedDimensions.right - this.renderedDimensions.left
+    this.renderedDimensions.height = this.renderedDimensions.bottom - this.renderedDimensions.top
+
     //Inline the styles to html
     let resolvedStyles = ""
     let inlineNodes = this.nodes.map(node => {
@@ -51,7 +62,7 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
   serialize() {
     let save = super.serialize()
     Object.assign(save, {paths: this.paths, subTitle: this.subTitle,
-                        html: this.html});
+                        html: this.html, renderedDimensions: this.renderedDimensions});
     return save;
   }
 

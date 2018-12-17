@@ -100,6 +100,20 @@ export default class AnchoredAnnotation extends BaseAnnotation {
             elem = elem.parentElement;
             style = window.getComputedStyle(elem);
           }
+          //Do the final iteration of this for the block level element
+          let rect = this.getAdjustedRect(elem, style, includePadding);
+
+          //Ignore empty elems
+          let areaChild = rect.width * rect.height;
+          if (areaChild <= 0)
+            return;
+
+          let areaSelection = (bottom - top) * (right - left);
+          //Calculate intersection + union of leaf (@see https://stackoverflow.com/questions/9324339/how-much-do-two-rectangles-overlap)
+          let SI = Math.max(0, Math.min(rect.right, right) - Math.max(rect.left, left)) * Math.max(0, Math.min(rect.bottom, bottom) - Math.max(rect.top, top));
+          //let SU = areaChild + areaSelection - SI;
+          if (SI > 0) //Just get any elements where there is an intersection
+            nodes.push({elem: elem, intersection: SI, areaChild: areaChild, style: style});
         }
       })
       return nodes;
