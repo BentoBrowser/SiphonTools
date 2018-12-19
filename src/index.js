@@ -57,6 +57,12 @@ export default {
   },
   getSelectionState: function() {
     return EventListener.getSelectionState()
+  },
+  disable: function() {
+    EventListener.disable()
+  },
+  enable: function() {
+    EventListener.enable()
   }
 }
 

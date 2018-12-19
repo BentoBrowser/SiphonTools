@@ -35,6 +35,7 @@ let currentListeners = {}
 
 export default {
   selectors: [],
+  enabled: true,
   init: function() {
     currentListeners = Object.keys(events).forEach(eventName => {
       let listener = (e) => {
@@ -44,6 +45,12 @@ export default {
       window.addEventListener(eventName, listener)
       return listener;
     })
+  },
+  disable: function() {
+    this.enabled = false
+  },
+  enable: function() {
+    this.enabled = true
   },
   getSelectionState: function() {
     return selectionState
@@ -55,6 +62,9 @@ export default {
     currentListeners = {}
   },
   checkConditions: function() {
+    if (!this.enabled)
+      return
+
     this.selectors.forEach(selector => {
       let isValid = selector.conditions(selectionState)
 
