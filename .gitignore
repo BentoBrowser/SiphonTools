@@ -62,3 +62,4 @@ typings/
 
 # vim files
 *.swp
+*.swo

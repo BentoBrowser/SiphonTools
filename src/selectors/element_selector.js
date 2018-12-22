@@ -3,7 +3,7 @@ var defaultTrigger = function({currentKey}) {
          && ["INPUT", "TEXTAREA"].indexOf(currentKey.target.nodeName) < 0 && !currentKey.target.isContentEditable
 }
 
-export default function ElementSelector({trigger = defaultTrigger, onComplete} = {}) {
+export default function ElementSelector({trigger = defaultTrigger, onComplete, onUpdate} = {}) {
   var saveElements = []
   var highlightBoxes = []
 
@@ -32,14 +32,24 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete} =
         highlightBox = null
         highlightedElement = null
         //mouseDown.target.style.border = '2px solid blue'
+
+        if (onUpdate && saveElements.length) {
+          onUpdate(saveElements, highlightBoxes)
+        }
       } else if (mouseDown && mouseDown.target.className.includes("siphon-element-selector")) {
         mouseDown.preventDefault()
         mouseDown.stopPropagation()
 
         let boxIdx = highlightBoxes.indexOf(mouseDown.target)
-        highlightBoxes.splice(boxIdx, 1)
-        saveElements.splice(boxIdx, 1)
-        mouseDown.target.remove()
+        if (boxIdx >= 0) {
+          highlightBoxes.splice(boxIdx, 1)
+          saveElements.splice(boxIdx, 1)
+          mouseDown.target.remove()
+
+          if (onUpdate && saveElements.length) {
+            onUpdate(saveElements, highlightBoxes)
+          }
+        }
       } else if (highlightedElement != mousePosition.target){
         if (!mousePosition.target.className.includes("siphon-element-selector")) {
           if (!highlightedElement) {
