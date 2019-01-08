@@ -122,6 +122,18 @@ export default class AnchoredAnnotation extends BaseAnnotation {
     var threshold = 0.9;
     var filteredNodes = [];
     if (touchingNodes.length) {
+      //Remove any nodes who are fixed or their parent element is fixed (usually header / interactive elements)
+      touchingNodes = touchingNodes.filter(node => {
+        node = node.elem
+        while(node) {
+          let style = window.getComputedStyle(node);
+          if (style.position == "fixed") {
+            return false
+          }
+          node = node.parentElement
+        }
+        return true
+      })
       while((filteredNodes.length < 1 || filteredNodes.filter((e) => e.style.display.indexOf("inline") >= 0).length > 0 )
              && threshold > 0.5) { //So while we have a no good matching nodes OR those nodes are only inline elements
                                    // And we're below our threshold, we keep expanding our search radius (aka fuzziness of overlapping area of intersection + area)
