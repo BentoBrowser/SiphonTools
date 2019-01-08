@@ -145,6 +145,7 @@ function computedStyleToInlineStyle(element, options = {}) {
 
     var computedStyle = window.getComputedStyle(element);
     let display = computedStyle.display;
+    let styleDisplay = element.style.display;
 
     //Let's determine if we have any pseudo elements by looking at their computed
     //height and width properties
@@ -243,7 +244,7 @@ function computedStyleToInlineStyle(element, options = {}) {
     }
 
     if (clone) {
-      element.style.display = null;
+      element.style.display = styleDisplay;
       clone.style.display = display;
 
       //Make sure we get the absolute URL saved
