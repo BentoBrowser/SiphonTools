@@ -15,12 +15,12 @@ let selectionState = {
 }
 
 let events = {
-  mousedown: (e) => Object.assign(selectionState, {mouseDown: e, mouseUp: false, mousePosition: e}),
+  mousedown: (e) => Object.assign(selectionState, {mouseDown: e, mouseUp: false, pointerUp: false, mousePosition: e}),
   mousemove: (e) => Object.assign(selectionState, {mousePosition: e}),
-  mouseup: (e) => Object.assign(selectionState, {mouseDown: false, mouseUp: e, mousePosition: e}),
+  mouseup: (e) => Object.assign(selectionState, {mouseDown: false, pointerDown: false, mouseUp: e, mousePosition: e}),
   contextmenu: (e) => Object.assign(selectionState, {mouseDown: false, mouseUp: e}),
-  pointerdown: (e) => Object.assign(selectionState, {pointerDown: e, pointerUp: false, pointerPosition: e}),
-  pointerup: (e) => Object.assign(selectionState, {pointerUp: e, pointerDown: false, pointerPosition: e}),
+  pointerdown: (e) => Object.assign(selectionState, {pointerDown: e, pointerUp: false, pointerPosition: e, mouseUp: false}),
+  pointerup: (e) => Object.assign(selectionState, {pointerUp: e, pointerDown: false, pointerPosition: e, mouseDown: false}),
   pointermove: (e) => Object.assign(selectionState, {pointerPosition: e}),
   keydown: (e) => Object.assign(selectionState, {currentKey: e}),
   keyup: (e) => Object.assign(selectionState, {previousKey: e, currentKey: false}),

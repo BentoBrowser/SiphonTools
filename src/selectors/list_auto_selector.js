@@ -112,15 +112,7 @@ function findLists(node) {
   if (listItems.length) {
     //Union together the bounding client rects of the children
     let exampleItem = listItems[0]
-    let [left, right, top, bottom] = [Infinity,-Infinity,Infinity,-Infinity]
-
-    listItems[0].forEach(item => {
-      let rect = item.getBoundingClientRect()
-      left = Math.min(left, rect.left)
-      right = Math.max(right, rect.right)
-      top = Math.min(top, rect.top)
-      bottom = Math.max(bottom, rect.bottom)
-    })
+    let {left, right, top, bottom} = union(listItems[0])
 
     let area = (right - left) * (bottom - top)
     if (area > 10000) { //If the area is bigger than the area of a 100 * 100px square, we include this list
@@ -135,6 +127,103 @@ function findLists(node) {
   return lists
 }
 
+function union(elements) {
+  let [left, right, top, bottom] = [Infinity,-Infinity,Infinity,-Infinity]
+  elements.forEach(item => {
+    let rect = item.getBoundingClientRect()
+    left = Math.min(left, rect.left)
+    right = Math.max(right, rect.right)
+    top = Math.min(top, rect.top)
+    bottom = Math.max(bottom, rect.bottom)
+  })
+  return {left, right, top, bottom}
+}
+
+export default function ListAutoSelector({trigger, onComplete}) {
+  var boundingBoxes = []
+  var lists = null
+  var selectedItems = []
+  var highlightedElement = null
+
+  trigger = trigger || function({currentKey}) {
+    return currentKey && currentKey.key == "Shift"
+           && ["INPUT", "TEXTAREA"].indexOf(currentKey.target.nodeName) < 0
+           && !currentKey.target.isContentEditable
+  }
+
+  return {
+    conditions: function(e) {
+      return trigger(e)
+    },
+    onSelectionChange: function({mouseDown, mousePosition}) {
+      if (mouseDown && mouseDown.target && mouseDown.target.className.includes("siphon-list-item")) {
+        mouseDown.preventDefault()
+        mouseDown.stopPropagation()
+        let listIdx = parseInt(mouseDown.target.className.split(" ").find(name => name.includes("siphon-list_")).split("_")[1])
+        let itemIdx = parseInt(mouseDown.target.className.split(" ").find(name => name.includes("siphon-list-item_")).split("_")[1])
+
+        let idx = selectedItems.findIndex(item => item[0] == listIdx && item[1] == itemIdx)
+        if (idx > -1) {
+          selectedItems.splice(idx, 1)
+          mouseDown.target.style.backgroundColor = '#84e2f199'
+          mouseDown.target.classList.remove("siphon-included-item")
+        } else {
+          selectedItems.push([listIdx, itemIdx])
+          mouseDown.target.style.backgroundColor = '#9af58999'
+          mouseDown.target.classList.add("siphon-included-item")
+        }
+      } else if (highlightedElement != mousePosition.target && mousePosition.target.className.includes("siphon-list-item")){
+        mousePosition.preventDefault()
+        mousePosition.stopPropagation()
+
+        if (highlightedElement && !highlightedElement.className.includes("siphon-included-item")) {
+          highlightedElement.style.backgroundColor = ''
+        }
+        highlightedElement = mousePosition.target
+        if (!highlightedElement.className.includes("siphon-included-item")) {
+          highlightedElement.style.backgroundColor = '#84e2f199'
+        }
+      }
+    },
+    onSelectionStart: function(e) {
+      selectedItems = []
+
+      if (!lists)
+        lists = findLists(document.body)
+
+      //For each of the list items we've found, draw a bounding box around the union of their area
+      lists.forEach((list, listIdx) => {
+        list.forEach((listItem, itemIdx) => {
+          let bounding = document.body.appendChild(document.createElement('div'))
+          let rect = union(listItem)
+
+          bounding.style.position = "absolute"
+          bounding.style.width = `${Math.abs(rect.right - rect.left)}px`;
+          bounding.style.height = `${Math.abs(rect.bottom - rect.top)}px`;
+          bounding.style.top = `${Math.abs(rect.top + window.pageYOffset)}px`;
+          bounding.style.left = `${Math.abs(rect.left + window.pageXOffset)}px`;
+          bounding.style.zIndex = "889944"
+          bounding.style.pointer = 'pointer'
+          bounding.style.border = '2px dashed lightgray'
+          bounding.className = `siphon-list-item siphon-list_${listIdx} siphon-list-item_${itemIdx}`
+          boundingBoxes.push(bounding)
+        })
+      })
+    },
+    onSelectionEnd: function(e) {
+      let remainingBoxes = []
+      boundingBoxes.forEach(box => {
+        if(!box.className.includes("siphon-included-item")) {
+          box.remove()
+        } else {
+          remainingBoxes.push(box)
+        }
+      })
+      boundingBoxes = []
+      onComplete(selectedItems.map(item => lists[item[0]][item[1]]), remainingBoxes)
+    }
+  }
+}
 
 /*
 Another approch would be an "exemplar" approach where we use the first complete set of items

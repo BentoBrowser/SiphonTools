@@ -22,6 +22,7 @@ import HighlightSelector from './selectors/highlight_selector'
 import HoverElementSelector from './selectors/hover_element_selector'
 import SnippetSelector from './selectors/snippet_selector'
 import ElementSelector from './selectors/element_selector'
+import ListAutoSelector from './selectors/list_auto_selector'
 
 /* An annotation map looks like the following:
 {
@@ -68,6 +69,6 @@ export default {
 
 export {AnchoredAnnotation, BaseAnnotation, ElementAnnotation, FragmentAnnotation, SelectionAnnotation,
         Highlight, ImageAnnotation, LinkAnnotation, Snippet, VideoAnnotation, Screenshot, PointAnnotation,
-        ClickElementSelector, DoubleTapSelector, HighlightSelector, HoverElementSelector, SnippetSelector, ElementSelector,
+        ClickElementSelector, DoubleTapSelector, HighlightSelector, HoverElementSelector, SnippetSelector, ElementSelector, ListAutoSelector,
         Store
       }
