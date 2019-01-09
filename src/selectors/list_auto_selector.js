@@ -191,17 +191,24 @@ export default function ListAutoSelector({trigger, onComplete}) {
       if (!lists)
         lists = findLists(document.body)
 
-      //For each of the list items we've found, draw a bounding box around the union of their area
-      lists.forEach((list, listIdx) => {
-        list.forEach((listItem, itemIdx) => {
-          let bounding = document.body.appendChild(document.createElement('div'))
-          let rect = union(listItem)
+      //Read early on to prevent browser reflow issues
+      let yOffset = window.pageYOffset
+      let xOffset = window.pageXOffset
+      let rects = lists.map((list) => {
+        return list.map((listItem) => {
+          return union(listItem)
+        })
+      })
 
+      //For each of the list items we've found, draw a bounding box around the union of their area
+      rects.forEach((list, listIdx) => {
+        list.forEach((rect, itemIdx) => {
+          let bounding = document.body.appendChild(document.createElement('div'))
           bounding.style.position = "absolute"
-          bounding.style.width = `${Math.abs(rect.right - rect.left)}px`;
-          bounding.style.height = `${Math.abs(rect.bottom - rect.top)}px`;
-          bounding.style.top = `${Math.abs(rect.top + window.pageYOffset)}px`;
-          bounding.style.left = `${Math.abs(rect.left + window.pageXOffset)}px`;
+          bounding.style.width = `${rect.right - rect.left}px`;
+          bounding.style.height = `${rect.bottom - rect.top}px`;
+          bounding.style.top = `${rect.top + yOffset}px`;
+          bounding.style.left = `${rect.left + xOffset}px`;
           bounding.style.zIndex = "889944"
           bounding.style.pointer = 'pointer'
           bounding.style.border = '2px dashed lightgray'
