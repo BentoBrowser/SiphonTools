@@ -16,7 +16,7 @@
     "markup"
   ],
   "author": "Nathan Hahn <nhahn@andrew.cmu.edu>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/BentoBrowser/SiphonTools/issues"
   },
