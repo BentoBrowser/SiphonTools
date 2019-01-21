@@ -2,6 +2,15 @@
 
 SiphonTools is a library for easy creation and management of webpage annotations. 
 
+Using this library, you can quickly and easily enable different modes of selection beyond what the browser provides such as:
+![Different Selection Types](https://github.com/BentoBrowser/SiphonTools/raw/master/media/selection-table-new.png)
+
+Those selections are then saved as their raw HTML content with any styling, media, etc. from the page embdeded in the annotation given back. 
+
+![Rendered Note Output](https://github.com/BentoBrowser/SiphonTools/raw/master/media/noteClip.png)
+
+Lastly, Siphon will keep track of where an annotation was taken from, allowing you to markup the page to indicate to users where the annotation originated from. This markup will even persist between refreshes / sessions. 
+
 ## Installation
 
 Install siphon-tools using npm or yarn
