@@ -6,6 +6,7 @@ export default class Link extends ElementAnnotation{
     super(linkNode);
     this.href = linkNode.href
     this.allReferences = Array.from(document.querySelectorAll('a')).filter(elem => elem.href == this.href)
+    this.text = linkNode.innerText
   }
 
   serialize() {

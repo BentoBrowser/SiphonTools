@@ -1,7 +1,7 @@
-export default function ClickElementSelector({selector, onClick}) {
+export default function ClickElementSelector({selector, otherConditions = () => true, onClick}) {
   return {
     conditions: function({mouseDown}) {
-      return mouseDown && mouseDown.target.matches(selector)
+      return mouseDown && mouseDown.target.matches(selector) && otherConditions()
     },
     onSelectionEnd: function({mouseUp}) {
       if (mouseUp && mouseUp.target.matches(selector))

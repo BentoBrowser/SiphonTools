@@ -7,6 +7,7 @@ export default class Image extends ElementAnnotation{
     this.src = imageNode.src
     this.allReferences = Array.from(document.querySelectorAll('img')).filter(elem => elem.src == this.src)
     this.cropping = null
+    this.text = imageNode.getAttribute('alt') //Save the alt text as the source text
     if (cropping) { //Rect is an optional cropping we have for the image
       this.cropping = {
         left: rect.left || 0,

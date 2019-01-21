@@ -15,12 +15,12 @@ let selectionState = {
 }
 
 let events = {
-  mousedown: (e) => Object.assign(selectionState, {mouseDown: e, mouseUp: false, pointerUp: false, mousePosition: e}),
+  mousedown: (e) => Object.assign(selectionState, {mouseDown: e, mouseUp: false, mousePosition: e}),
   mousemove: (e) => Object.assign(selectionState, {mousePosition: e}),
-  mouseup: (e) => Object.assign(selectionState, {mouseDown: false, pointerDown: false, mouseUp: e, mousePosition: e}),
+  mouseup: (e) => Object.assign(selectionState, {mouseDown: false, mouseUp: e, mousePosition: e}),
   contextmenu: (e) => Object.assign(selectionState, {mouseDown: false, mouseUp: e}),
-  pointerdown: (e) => Object.assign(selectionState, {pointerDown: e, pointerUp: false, pointerPosition: e, mouseUp: false}),
-  pointerup: (e) => Object.assign(selectionState, {pointerUp: e, pointerDown: false, pointerPosition: e, mouseDown: false}),
+  pointerdown: (e) => Object.assign(selectionState, {pointerDown: e, pointerUp: false, pointerPosition: e}),
+  pointerup: (e) => Object.assign(selectionState, {pointerUp: e, pointerDown: false, pointerPosition: e}),
   pointermove: (e) => Object.assign(selectionState, {pointerPosition: e}),
   keydown: (e) => Object.assign(selectionState, {currentKey: e}),
   keyup: (e) => Object.assign(selectionState, {previousKey: e, currentKey: false}),
@@ -36,6 +36,7 @@ let currentListeners = {}
 export default {
   selectors: [],
   enabled: true,
+  currentSelector: null,
   init: function() {
     currentListeners = Object.keys(events).forEach(eventName => {
       let listener = (e) => {
@@ -65,22 +66,35 @@ export default {
     if (!this.enabled)
       return
 
+    //If we have a selector currently running, we check and update that first
+    if (this.currentSelector) {
+      let selector = this.currentSelector
+      let isValid = this.currentSelector.conditions(selectionState)
+      if (isValid) {
+        if (selector.onSelectionChange)
+          selector.onSelectionChange(selectionState)
+        return;
+      } else {
+        selector.isRunning = false;
+        if (selector.onSelectionEnd)
+          selector.onSelectionEnd(selectionState)
+        this.currentSelector = null
+      }
+    }
+
+    //Finally, if we don't have a current selector, we loop through the available ones
+    //finding the first valid one and setting that to our current selection state
     this.selectors.forEach(selector => {
       let isValid = selector.conditions(selectionState)
 
-      if (isValid && selector.isRunning) {
-        if (selector.onSelectionChange)
-          selector.onSelectionChange(selectionState)
-      } else if (isValid && !selector.isRunning) {
+      if (isValid) {
         selector.isRunning = true;
+        this.currentSelector = selector
         if (selector.onSelectionStart)
           selector.onSelectionStart(selectionState)
         if (selector.onSelectionChange)
           selector.onSelectionChange(selectionState)
-      } else if (selector.isRunning && !isValid) {
-        selector.isRunning = false;
-        if (selector.onSelectionEnd)
-          selector.onSelectionEnd(selectionState)
+        return
       }
     })
   }

@@ -51,7 +51,7 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete, o
           }
         }
       } else if (highlightedElement != mousePosition.target){
-        if (!mousePosition.target.className.includes("siphon-element-selector")) {
+        if (mousePosition && mousePosition.target && !mousePosition.target.className.includes("siphon-element-selector")) {
           if (!highlightedElement) {
             highlightBox = document.body.appendChild(document.createElement('div'));
             highlightBox.style.position = "absolute"

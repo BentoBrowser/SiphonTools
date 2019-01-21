@@ -1,4 +1,4 @@
-export default function HoverElementSelector({selector, displayOverlay, hideOverlay}) {
+export default function HoverElementSelector({selector, otherConditions = () => true, displayOverlay, hideOverlay}) {
   var element = null
   return {
     conditions: function({mousePosition}) {
@@ -10,7 +10,7 @@ export default function HoverElementSelector({selector, displayOverlay, hideOver
       stack = document.elementsFromPoint(x,y)
       //Search for videos first
       element = stack.find(elem => elem.matches(selector))
-      return !!element
+      return !!element && otherConditions()
     },
     onSelectionStart: function(e) {
       displayOverlay(element, e)
