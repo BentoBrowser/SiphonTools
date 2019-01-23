@@ -139,7 +139,7 @@ function union(elements) {
   return {left, right, top, bottom}
 }
 
-export default function ListAutoSelector({trigger, onComplete}) {
+export default function ListAutoSelector({trigger, onComplete, onUpdate}) {
   var boundingBoxes = []
   var lists = null
   var selectedItems = []
@@ -155,8 +155,8 @@ export default function ListAutoSelector({trigger, onComplete}) {
     conditions: function(e) {
       return trigger(e)
     },
-    onSelectionChange: function({mouseDown, mousePosition}) {
-      if (mouseDown && mouseDown.target && mouseDown.target.className.includes("siphon-list-item")) {
+    onSelectionChange: function({causingEvent, mouseDown, mousePosition}) {
+      if (causingEvent == "mousedown" && mouseDown.target && mouseDown.target.className.includes("siphon-list-item")) {
         mouseDown.preventDefault()
         mouseDown.stopPropagation()
         let listIdx = parseInt(mouseDown.target.className.split(" ").find(name => name.includes("siphon-list_")).split("_")[1])
@@ -171,6 +171,16 @@ export default function ListAutoSelector({trigger, onComplete}) {
           selectedItems.push([listIdx, itemIdx])
           mouseDown.target.style.backgroundColor = '#9af58999'
           mouseDown.target.classList.add("siphon-included-item")
+        }
+
+        let remainingBoxes = []
+        boundingBoxes.forEach(box => {
+          if(box.className.includes("siphon-included-item")) {
+            remainingBoxes.push(box)
+          }
+        })
+        if (onUpdate && selectedItems.length) {
+          onUpdate(selectedItems.map(item => lists[item[0]][item[1]]), remainingBoxes)
         }
       } else if (highlightedElement != mousePosition.target && mousePosition.target.className.includes("siphon-list-item")){
         mousePosition.preventDefault()
@@ -227,7 +237,8 @@ export default function ListAutoSelector({trigger, onComplete}) {
         }
       })
       boundingBoxes = []
-      onComplete(selectedItems.map(item => lists[item[0]][item[1]]), remainingBoxes)
+      if (onComplete)
+        onComplete(selectedItems.map(item => lists[item[0]][item[1]]), remainingBoxes)
     }
   }
 }

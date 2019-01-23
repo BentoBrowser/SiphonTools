@@ -15,21 +15,21 @@ let selectionState = {
 }
 
 let events = {
-  mousedown: (e) => Object.assign(selectionState, {mouseDown: e, mouseUp: false, mousePosition: e}),
-  mousemove: (e) => Object.assign(selectionState, {mousePosition: e}),
-  mouseup: (e) => Object.assign(selectionState, {mouseDown: false, mouseUp: e, mousePosition: e}),
-  contextmenu: (e) => Object.assign(selectionState, {mouseDown: false, mouseUp: e}),
-  pointerdown: (e) => Object.assign(selectionState, {pointerDown: e, pointerUp: false, pointerPosition: e}),
-  pointerup: (e) => Object.assign(selectionState, {pointerUp: e, pointerDown: false, pointerPosition: e}),
-  pointermove: (e) => Object.assign(selectionState, {pointerPosition: e}),
-  keydown: (e) => Object.assign(selectionState, {currentKey: e}),
-  keyup: (e) => Object.assign(selectionState, {previousKey: e, currentKey: false}),
-  wheel: (e) => Object.assign(selectionState, {wheel: e}),
-  scroll: (e) => Object.assign(selectionState, {scroll: e}),
-  touchstart: (e) => Object.assign(selectionState, {touchStart: e, touchEnd: false, touchPosition: e}),
-  touchmove: (e) => Object.assign(selectionState, {touchPosition: e}),
-  touchEnd: (e) => Object.assign(selectionState, {touchEnd: e, touchStart: false, touchPosition: e}),
-  touchcancel: (e) => Object.assign(selectionState, {touchEnd: e, touchStart: false, touchPosition: e})
+  mousedown: (e) => Object.assign(selectionState, {mouseDown: e, mouseUp: false, mousePosition: e, causingEvent: 'mousedown'}),
+  mousemove: (e) => Object.assign(selectionState, {mousePosition: e, causingEvent: 'mousemove'}),
+  mouseup: (e) => Object.assign(selectionState, {mouseDown: false, mouseUp: e, mousePosition: e, causingEvent: 'mouseup'}),
+  contextmenu: (e) => Object.assign(selectionState, {mouseDown: false, mouseUp: e, causingEvent: 'contextmenu'}),
+  pointerdown: (e) => Object.assign(selectionState, {pointerDown: e, pointerUp: false, pointerPosition: e, causingEvent: 'pointerdown'}),
+  pointerup: (e) => Object.assign(selectionState, {pointerUp: e, pointerDown: false, pointerPosition: e, causingEvent: 'pointerup'}),
+  pointermove: (e) => Object.assign(selectionState, {pointerPosition: e, causingEvent: 'pointermove'}),
+  keydown: (e) => Object.assign(selectionState, {currentKey: e, causingEvent: 'keydown'}),
+  keyup: (e) => Object.assign(selectionState, {previousKey: e, currentKey: false, causingEvent: 'keyup'}),
+  wheel: (e) => Object.assign(selectionState, {wheel: e, causingEvent: 'wheel'}),
+  scroll: (e) => Object.assign(selectionState, {scroll: e, causingEvent: 'scroll'}),
+  touchstart: (e) => Object.assign(selectionState, {touchStart: e, touchEnd: false, touchPosition: e, causingEvent: 'touchstart'}),
+  touchmove: (e) => Object.assign(selectionState, {touchPosition: e, causingEvent: 'touchmove'}),
+  touchend: (e) => Object.assign(selectionState, {touchEnd: e, touchStart: false, touchPosition: e, causingEvent: 'touchend'}),
+  touchcancel: (e) => Object.assign(selectionState, {touchEnd: e, touchStart: false, touchPosition: e, causingEvent: 'touchcancel'})
 }
 let currentListeners = {}
 
@@ -43,7 +43,7 @@ export default {
         events[eventName](e)
         this.checkConditions(e)
       }
-      window.addEventListener(eventName, listener)
+      window.addEventListener(eventName, listener, true)
       return listener;
     })
   },

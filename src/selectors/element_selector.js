@@ -12,8 +12,8 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete, o
 
   return {
     conditions: trigger,
-    onSelectionChange: function({mouseDown, mousePosition}) {
-      if (mouseDown && highlightedElement) {
+    onSelectionChange: function({causingEvent, mouseDown, mousePosition}) {
+      if (causingEvent == "mousedown"  && highlightedElement) {
         mouseDown.preventDefault()
         mouseDown.stopPropagation()
 
@@ -36,7 +36,7 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete, o
         if (onUpdate && saveElements.length) {
           onUpdate(saveElements, highlightBoxes)
         }
-      } else if (mouseDown && mouseDown.target.className.includes("siphon-element-selector")) {
+      } else if (causingEvent == "mousedown" && mouseDown.target.className.includes("siphon-element-selector")) {
         mouseDown.preventDefault()
         mouseDown.stopPropagation()
 
