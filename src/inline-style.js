@@ -133,7 +133,32 @@ function computedStyleToInlineStyle(element, options = {}) {
     let styleInfo = "";
 
     if (recursive) {
-      Array.prototype.map.call(element.children, function(child, idx) {
+      let children = element.children
+      //TODO cool iframe stuff here?
+      if (element.tagName == "IFRAME" && element.contentDocument && clone) {
+        children = [element.contentDocument.body]
+      }
+
+      Array.prototype.map.call(children, function(child, idx) {
+        if (child.tagName == "IFRAME" && child.contentDocument && clone.children[idx]) { //Iframe case
+          let placeholder = document.createElement("div");
+          // Copy the attributes
+          for (let index = child.attributes.length - 1; index >= 0; --index) {
+              placeholder.attributes.setNamedItem(child.attributes[index].cloneNode());
+          }
+          clone.replaceChild(placeholder, clone.children[idx])
+          let clonedBody = child.contentDocument.body.cloneNode(true)
+          let placeholderBody = document.createElement("div")
+
+          // Copy the children
+          while (clonedBody.firstChild) {
+              placeholderBody.appendChild(clonedBody.firstChild); // *Moves* the child
+          }
+          for (let index = clonedBody.attributes.length - 1; index >= 0; --index) {
+              placeholder.attributes.setNamedItem(clonedBody.attributes[index].cloneNode());
+          }
+          placeholder.appendChild(placeholderBody)
+        }
         let newOptions = Object.assign({}, options);
         if (clone) {
           newOptions.clone = clone.children[idx];
@@ -172,10 +197,21 @@ function computedStyleToInlineStyle(element, options = {}) {
         //Only save values that aren't the initial ones for the element
         if (initialValues[element.tagName.toLowerCase()] &&
             initialValues[element.tagName.toLowerCase()][property] != value) {
-          if (clone)
+          // let urlMatch = value.match(/url\("(.*)"\)/)
+          // if (urlMatch) {
+          //   try {
+          //     let resolvedUrl = new URL(urlMatch[1], document.location.href)
+          //     value = `url("${resolvedUrl.href}")`
+          //   } catch(e) {}
+          // }
+          if (clone) { //Clear the styles first because sometimes they won't update with their resolved values
+            clone.style[property] = "";
             clone.style[property] = value;
-          else
+          }
+          else {
+            element.style[property] = "";
             element.style[property] = value;
+          }
         }
 
       }

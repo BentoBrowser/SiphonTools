@@ -3,6 +3,10 @@ import XPath from 'xpath-dom'
 import {compact, uniq, sortBy, first} from 'lodash'
 import {computedStyleToInlineStyle, resolveHangingTags} from '../inline-style'
 
+function visible( elem ) {
+    return !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
+};
+
 export default class AnchoredAnnotation extends BaseAnnotation {
   constructor(anchor) {
     super();
@@ -186,7 +190,7 @@ export default class AnchoredAnnotation extends BaseAnnotation {
       //Sadly the above doesn't work in cases with odd padding values -- might still be better in most cases?
 
       //Only include visible children
-      if (Array.from(parent.children).filter(elem => elem.offsetParent).length == children.length) {
+      if (Array.from(parent.children).filter(elem => visible(elem)).length == children.length) {
         foundNewParent = true;
         newSet.push(parent);
       }

@@ -5,13 +5,22 @@ import {computedStyleToInlineStyle, resolveHangingTags} from '../inline-style'
 import rangyTextRange from 'rangy/lib/rangy-textrange'
 import rangy from 'rangy/lib/rangy-core.js';
 
+function getBGColor(el) {
+    var s = getComputedStyle(el),
+        b = s.backgroundColor,
+        e = el;
+    if ((b === "transparent" || b === "rgba(0, 0, 0, 0)" || b === "rgba(255,255,255,0)") && e.parentNode !== null)
+        b = getBGColor(e.parentNode);
+    return b;
+}
+
 export default class FragmentAnnotation extends AnchoredAnnotation {
 
   constructor(nodes) {
     super(nodes[0]);
     this.nodes = nodes;
     this.paths = this.nodes.map((elem) => XPath.getUniqueXPath(elem, document.body));
-    this.text = this.nodes.map(elem => rangy.innerText(elem)).join("\n");
+    this.text = this.nodes.map(elem => elem.innerText).join("\n");
 
     this.renderedDimensions = nodes.map(node => node.getBoundingClientRect()).reduce((finalRect, currRect) => {
       return {
@@ -31,6 +40,15 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
       resolvedStyles += styleInfo
       return element
     })
+
+    inlineNodes.forEach(node => Array.from(node.querySelectorAll('style')).forEach(elem => elem.remove()))
+    inlineNodes.forEach(node => Array.from(node.querySelectorAll('script')).forEach(elem => elem.remove()))
+
+    //Embed the "visible" background color of these nodes in them
+    this.nodes.forEach((node, idx) => {
+      inlineNodes[idx].style.backgroundColor = getBGColor(node)
+    })
+
     let {cloneNodes: resolved, style} = resolveHangingTags(this.nodes, inlineNodes.slice(0));
     resolvedStyles += style
     this.html = resolved.map(elem => elem.outerHTML);
@@ -48,7 +66,7 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
       headerNodes.push(...node.querySelectorAll('h1,h2,h3,h4,h5.h6'))
     })
     let headerNode = first(sortBy(headerNodes, 'tagName'));
-    this.subTitle = (headerNode)? rangy.innerText(headerNode) : null;
+    this.subTitle = (headerNode)? headerNode.innerText : null;
   }
 
   deserialize(serialized) {

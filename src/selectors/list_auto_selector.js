@@ -41,7 +41,8 @@ function findLists(node) {
           let intersection = exampleClasses.filter(className => childClasses.indexOf(className) > -1)
           //We want > 50% of the classes for this item to be shared (or maybe just 1?)
           //Or if we don't have any classes for either, count that as a grouping as well
-          if ((!exampleClasses.length && !childClasses.length) || intersection.length / exampleClasses.length > CLASS_THRESHOLD) {
+          //if ((!exampleClasses.length && !childClasses.length) || intersection.length / exampleClasses.length > CLASS_THRESHOLD) {
+          if ((!exampleClasses.length && !childClasses.length) || intersection.length > 0) {
             tagClusters[i].push(child)
             inserted = true
             break;
