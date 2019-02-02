@@ -1,5 +1,5 @@
 const CLASS_THRESHOLD = 0.5
-const MIN_LIST_LENGTH = 5
+const MIN_LIST_LENGTH = 3
 const IGNORE_TAGS = ["SCRIPT", "STYLE"]
 
 function findLists(node) {

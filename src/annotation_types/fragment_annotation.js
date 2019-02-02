@@ -9,7 +9,7 @@ function getBGColor(el) {
     var s = getComputedStyle(el),
         b = s.backgroundColor,
         e = el;
-    if ((b === "transparent" || b === "rgba(0, 0, 0, 0)" || b === "rgba(255,255,255,0)") && e.parentNode !== null)
+    if ((b === "transparent" || b === "rgba(0, 0, 0, 0)" || b === "rgba(255,255,255,0)") && e.parentNode !== null && e.parentNode !== document)
         b = getBGColor(e.parentNode);
     return b;
 }
