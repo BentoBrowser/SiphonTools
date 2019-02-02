@@ -30,7 +30,7 @@ function resolveHangingTags(originalNodes, cloneNodes) {
           //If we already have the immediate parent, then just put it in there
           if (Array.from(parent.children).includes(originalNodes[j])) {
             parents.clones[v].appendChild(cloneNodes[j]);
-          } else { //Otherwise we need to find the appropriate parent elements up to this one
+          } else if (parent != originalNodes[j]){ //Otherwise we need to find the appropriate parent elements up to this one
             let addParents = getNodesToParents(originalNodes[j], cloneNodes[j], parent)
             parents.clones[v].appendChild(last(addParents.clones));
             style += addParents.style
@@ -163,8 +163,10 @@ function computedStyleToInlineStyle(element, options = {}) {
         if (clone) {
           newOptions.clone = clone.children[idx];
         }
-        let ret = computedStyleToInlineStyle(child, newOptions);
-        styleInfo += ret.styleInfo
+        if (!!child.style) {
+          let ret = computedStyleToInlineStyle(child, newOptions);
+          styleInfo += ret.styleInfo
+        }
       });
     }
 
