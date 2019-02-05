@@ -14,6 +14,12 @@
  captureWindow.className = 'siphon-selection-window';
 
  const styleElem = document.createElement('style');
+ if (!document.head) {
+   let htmls = document.getElementsByTagName('html');
+   if (html && html.length) {
+     htmls[0].insertBefore(document.createElement('head'), document.body);
+   }
+ }
  document.head.appendChild(styleElem);
  var styleSheet = styleElem.sheet;
 
