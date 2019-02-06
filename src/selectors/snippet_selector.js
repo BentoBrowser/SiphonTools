@@ -16,7 +16,7 @@
  const styleElem = document.createElement('style');
  if (!document.head) {
    let htmls = document.getElementsByTagName('html');
-   if (html && html.length) {
+   if (htmls && htmls.length) {
      htmls[0].insertBefore(document.createElement('head'), document.body);
    }
  }
