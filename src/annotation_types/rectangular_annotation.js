@@ -2,12 +2,12 @@ import FragmentAnnotation from './fragment_annotation'
 
 export default class RectangularAnnotation extends FragmentAnnotation {
 
-  constructor(rect) {
-    rect = {top: rect.top + window.scrollY,
-       bottom: rect.bottom + window.scrollY,
-       left: rect.left + window.scrollX,
-       right: rect.right + window.scrollX,
-       width: rect.width, height: rect.height}
+  constructor(origRect) {
+    const rect = {top: origRect.top + window.scrollY,
+       bottom: origRect.bottom + window.scrollY,
+       left: origRect.left + window.scrollX,
+       right: origRect.right + window.scrollX,
+       width: origRect.width, height: origRect.height}
 
     let leafNodes = FragmentAnnotation.filterLeafNodes(rect);
     let nodes = FragmentAnnotation.findOptimalParents(leafNodes);
@@ -16,22 +16,26 @@ export default class RectangularAnnotation extends FragmentAnnotation {
     this.initialDimensions = {
       width: rect.width,
       height: rect.height,
-      top: rect.top,
-      bottom: rect.bottom,
-      left: rect.left,
-      right: rect.right
+    }
+
+    this.coordinates = {
+      top: origRect.top,
+       bottom: origRect.bottom,
+       left: origRect.left,
+       right: origRect.right,
     }
   }
 
   serialize() {
     let save = super.serialize()
-    Object.assign(save, {initialDimensions: this.initialDimensions});
+    Object.assign(save, {initialDimensions: this.initialDimensions, coordinates: this.coordinates});
     return save;
   }
 
   deserialize(serialized) {
     super.deserialize(serialized)
     this.initialDimensions = serialized.initialDimensions;
+    this.coordinates = serialized.coordinates;
   }
 
 }
