@@ -15,7 +15,11 @@ export default class RectangularAnnotation extends FragmentAnnotation {
 
     this.initialDimensions = {
       width: rect.width,
-      height: rect.height
+      height: rect.height,
+      top: rect.top,
+      bottom: rect.bottom,
+      left: rect.left,
+      right: rect.right
     }
   }
 
