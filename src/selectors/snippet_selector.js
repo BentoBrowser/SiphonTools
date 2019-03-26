@@ -28,7 +28,7 @@ const defaultTrigger = function(e) {
    //  || e.mousePosition.getModifierState("Meta") Used to allow meta, but causes issues with new tab interaction
 }
 
-export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
+export default function SnippetSelector({onTrigger, onSelectionChange = null, trigger = defaultTrigger}) {
   return {
     conditions: function(e) {
       return trigger(e) && e.mouseDown
@@ -38,6 +38,9 @@ export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
       styleSheet.insertRule('::selection { background-color: inherit  !important; color: inherit  !important;}');
     },
     onSelectionChange: function({mouseDown, mousePosition}) {
+      if (onSelectionChange) {
+        onSelectionChange()
+      }
       captureWindow.style.width = `${Math.abs(mouseDown.pageX - mousePosition.pageX)}px`;
       captureWindow.style.height = `${Math.abs(mouseDown.pageY - mousePosition.pageY)}px`;
 
