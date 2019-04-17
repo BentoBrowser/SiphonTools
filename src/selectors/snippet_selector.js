@@ -39,15 +39,16 @@ export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
       styleSheet.insertRule('::selection { background-color: inherit  !important; color: inherit  !important;}');
     },
     onSelectionChange: function({mouseDown, mousePosition}) {
-      captureWindow.style.width = `${Math.abs(mouseDown.pageX - mousePosition.pageX)}px`;
-      captureWindow.style.height = `${Math.abs(mouseDown.pageY - mousePosition.pageY)}px`;
+      if (mouseDown) {
+        captureWindow.style.width = `${Math.abs(mouseDown.pageX - mousePosition.pageX)}px`;
+        captureWindow.style.height = `${Math.abs(mouseDown.pageY - mousePosition.pageY)}px`;
 
-      captureWindow.style.top = (mousePosition.pageY >= mouseDown.pageY)? `${mouseDown.pageY}px` : `${mousePosition.pageY}px`;
-      captureWindow.style.left = (mousePosition.pageX >= mouseDown.pageX)? `${mouseDown.pageX}px` : `${mousePosition.pageX}px`;
+        captureWindow.style.top = (mousePosition.pageY >= mouseDown.pageY)? `${mouseDown.pageY}px` : `${mousePosition.pageY}px`;
+        captureWindow.style.left = (mousePosition.pageX >= mouseDown.pageX)? `${mouseDown.pageX}px` : `${mousePosition.pageX}px`;
+      }
     },
     onSelectionEnd: function(e) {
       let selection = document.getSelection();
-      styleElem.remove()
       if (!e.mouseDown) { //In this case we still have the mouse depressed, so we gracefully cancel the selection
         let bounding = captureWindow.getBoundingClientRect()
         selection.empty();
@@ -55,6 +56,7 @@ export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
       } else { //Otherwise we consider this a completed selection
         captureWindow.remove();
       }
+      styleElem.remove()
     }
   }
 }

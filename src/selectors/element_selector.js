@@ -3,7 +3,7 @@ var defaultTrigger = function({currentKey}) {
          && ["INPUT", "TEXTAREA"].indexOf(currentKey.target.nodeName) < 0 && !currentKey.target.isContentEditable
 }
 
-export default function ElementSelector({trigger = defaultTrigger, onComplete, onUpdate} = {}) {
+export default function ElementSelector({trigger = defaultTrigger, onComplete, onUpdate, ignoreElements} = {}) {
   var saveElements = []
   var highlightBoxes = []
 
@@ -26,7 +26,7 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete, o
         click.stopPropagation()
       }
 
-      if (causingEvent == "click"  && highlightedElement) {
+      if (causingEvent == "mouseup" && highlightedElement) {
 
         //Determine if any of the children are in our list -- if they are remove them
         for (let i = saveElements.length - 1; i >= 0; i--) {
@@ -47,7 +47,7 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete, o
         if (onUpdate && saveElements.length) {
           onUpdate(saveElements, highlightBoxes)
         }
-      } else if (causingEvent == "click" && mouseUp.target.className.includes("siphon-element-selector")) {
+      } else if (causingEvent == "mouseup" && mouseUp.target.className.includes("siphon-element-selector")) {
 
         let boxIdx = highlightBoxes.indexOf(mouseUp.target)
         if (boxIdx >= 0) {
@@ -60,7 +60,8 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete, o
           }
         }
       } else if (highlightedElement != mousePosition.target){
-        if (mousePosition && mousePosition.target && !mousePosition.target.className.includes("siphon-element-selector")) {
+        if (mousePosition && mousePosition.target && !mousePosition.target.matches(ignoreElements)
+          && !mousePosition.target.className.includes("siphon-element-selector")) {
           if (!highlightedElement) {
             highlightBox = document.body.appendChild(document.createElement('div'));
             highlightBox.style.position = "absolute"
@@ -89,9 +90,9 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete, o
     },
     onSelectionEnd: function(e) {
       //either cancel the selection
+      highlightedElement = null
       if (highlightBox) {
         highlightBox.remove()
-        highlightedElement = null
       }
 
       if (onComplete && saveElements.length)
