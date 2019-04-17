@@ -12,10 +12,21 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete, o
 
   return {
     conditions: trigger,
-    onSelectionChange: function({causingEvent, mouseDown, mousePosition}) {
-      if (causingEvent == "mousedown"  && highlightedElement) {
+    onSelectionChange: function({causingEvent, mouseUp, mousePosition, mouseDown, click}) {
+      if (mouseDown) {
         mouseDown.preventDefault()
         mouseDown.stopPropagation()
+      }
+      if (mouseUp) {
+        mouseUp.preventDefault()
+        mouseUp.stopPropagation()
+      }
+      if (click) {
+        click.preventDefault()
+        click.stopPropagation()
+      }
+
+      if (causingEvent == "click"  && highlightedElement) {
 
         //Determine if any of the children are in our list -- if they are remove them
         for (let i = saveElements.length - 1; i >= 0; i--) {
@@ -31,20 +42,18 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete, o
         highlightBox.style.backgroundColor = '#9af58999'
         highlightBox = null
         highlightedElement = null
-        //mouseDown.target.style.border = '2px solid blue'
+        //mouseUp.target.style.border = '2px solid blue'
 
         if (onUpdate && saveElements.length) {
           onUpdate(saveElements, highlightBoxes)
         }
-      } else if (causingEvent == "mousedown" && mouseDown.target.className.includes("siphon-element-selector")) {
-        mouseDown.preventDefault()
-        mouseDown.stopPropagation()
+      } else if (causingEvent == "click" && mouseUp.target.className.includes("siphon-element-selector")) {
 
-        let boxIdx = highlightBoxes.indexOf(mouseDown.target)
+        let boxIdx = highlightBoxes.indexOf(mouseUp.target)
         if (boxIdx >= 0) {
           highlightBoxes.splice(boxIdx, 1)
           saveElements.splice(boxIdx, 1)
-          mouseDown.target.remove()
+          mouseUp.target.remove()
 
           if (onUpdate && saveElements.length) {
             onUpdate(saveElements, highlightBoxes)

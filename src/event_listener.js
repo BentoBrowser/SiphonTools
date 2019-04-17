@@ -15,6 +15,7 @@ let selectionState = {
 }
 
 let events = {
+  click: (e) => Object.assign(selectionState, {click: e, causingEvent: 'click'}),
   mousedown: (e) => Object.assign(selectionState, {mouseDown: e, mouseUp: false, mousePosition: e, causingEvent: 'mousedown'}),
   mousemove: (e) => Object.assign(selectionState, {mousePosition: e, causingEvent: 'mousemove'}),
   mouseup: (e) => Object.assign(selectionState, {mouseDown: false, mouseUp: e, mousePosition: e, causingEvent: 'mouseup'}),
@@ -76,6 +77,8 @@ export default {
         return;
       } else {
         selector.isRunning = false;
+        if (selector.onSelectionChange)
+          selector.onSelectionChange(selectionState)
         if (selector.onSelectionEnd)
           selector.onSelectionEnd(selectionState)
         this.currentSelector = null

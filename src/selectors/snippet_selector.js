@@ -13,20 +13,12 @@
  let captureWindow = document.createElement('div');
  captureWindow.className = 'siphon-selection-window';
 
- const styleElem = document.createElement('style');
- if (!document.head) {
-   let htmls = document.getElementsByTagName('html');
-   if (htmls && htmls.length) {
-     htmls[0].insertBefore(document.createElement('head'), document.body);
-   }
- }
- document.head.appendChild(styleElem);
- var styleSheet = styleElem.sheet;
-
 const defaultTrigger = function(e) {
   return e.mousePosition.getModifierState("Alt")
    //  || e.mousePosition.getModifierState("Meta") Used to allow meta, but causes issues with new tab interaction
 }
+
+let styleElem = null;
 
 export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
   return {
@@ -35,6 +27,15 @@ export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
     },
     onSelectionStart: function(e) {
       document.body.appendChild(captureWindow);
+      styleElem = document.createElement('style');
+      if (!document.head) {
+        let htmls = document.getElementsByTagName('html');
+        if (htmls && htmls.length) {
+          htmls[0].insertBefore(document.createElement('head'), document.body);
+        }
+      }
+      document.head.appendChild(styleElem);
+      var styleSheet = styleElem.sheet;
       styleSheet.insertRule('::selection { background-color: inherit  !important; color: inherit  !important;}');
     },
     onSelectionChange: function({mouseDown, mousePosition}) {
@@ -46,13 +47,12 @@ export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
     },
     onSelectionEnd: function(e) {
       let selection = document.getSelection();
+      styleElem.remove()
       if (!e.mouseDown) { //In this case we still have the mouse depressed, so we gracefully cancel the selection
         let bounding = captureWindow.getBoundingClientRect()
-        styleSheet.removeRule(0);
         selection.empty();
         onTrigger(captureWindow, e)
       } else { //Otherwise we consider this a completed selection
-        styleSheet.removeRule(0);
         captureWindow.remove();
       }
     }
