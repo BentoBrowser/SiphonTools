@@ -20,7 +20,7 @@ const defaultTrigger = function(e) {
 
 let styleElem = null;
 
-export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
+export default function SnippetSelector({onTrigger, trigger = defaultTrigger, onStart = () => null, onChange = () => null}) {
   return {
     conditions: function(e) {
       return trigger(e) && e.mouseDown
@@ -37,8 +37,10 @@ export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
       document.head.appendChild(styleElem);
       var styleSheet = styleElem.sheet;
       styleSheet.insertRule('::selection { background-color: inherit  !important; color: inherit  !important;}');
+      onStart(e)
     },
-    onSelectionChange: function({mouseDown, mousePosition}) {
+    onSelectionChange: function(e) {
+      let {mouseDown, mousePosition} = e
       if (mouseDown) {
         captureWindow.style.width = `${Math.abs(mouseDown.pageX - mousePosition.pageX)}px`;
         captureWindow.style.height = `${Math.abs(mouseDown.pageY - mousePosition.pageY)}px`;
@@ -46,6 +48,7 @@ export default function SnippetSelector({onTrigger, trigger = defaultTrigger}) {
         captureWindow.style.top = (mousePosition.pageY >= mouseDown.pageY)? `${mouseDown.pageY}px` : `${mousePosition.pageY}px`;
         captureWindow.style.left = (mousePosition.pageX >= mouseDown.pageX)? `${mouseDown.pageX}px` : `${mousePosition.pageX}px`;
       }
+      onChange(e)
     },
     onSelectionEnd: function(e) {
       let selection = document.getSelection();

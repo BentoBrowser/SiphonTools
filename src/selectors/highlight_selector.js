@@ -1,8 +1,8 @@
-export default function HighlightSelector({onTrigger}) {
+export default function HighlightSelector({onTrigger, conditions}) {
   return {
-    conditions: function({mouseDown}) {
-      return mouseDown && !(mouseDown.getModifierState("Alt") || mouseDown.getModifierState("Meta")) &&
-      ["INPUT", "TEXTAREA"].indexOf(mouseDown.target.nodeName) < 0 && !mouseDown.target.isContentEditable
+    conditions: function(e) {
+      return e.mouseDown && conditions(e) &&
+      ["INPUT", "TEXTAREA"].indexOf(e.mouseDown.target.nodeName) < 0 && !e.mouseDown.target.isContentEditable
     },
     onSelectionEnd: function(e) {
       let selection = document.getSelection();

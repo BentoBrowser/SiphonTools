@@ -29,7 +29,7 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
         bottom: Math.max(finalRect.bottom, currRect.bottom),
         right: Math.max(finalRect.right, currRect.right)
       }
-    })
+    }, {top: 0, left: 0, right: 0, bottom: 0})
     this.renderedDimensions.width = this.renderedDimensions.right - this.renderedDimensions.left
     this.renderedDimensions.height = this.renderedDimensions.bottom - this.renderedDimensions.top
 
