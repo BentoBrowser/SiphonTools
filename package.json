@@ -1,10 +1,14 @@
 {
   "name": "siphon-tools",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A set of tools for annotating the web with Javascript",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -27,5 +31,14 @@
     "uuid": "^3.3.2",
     "xpath-dom": "^0.2.2",
     "xpath-range": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.136",
+    "@types/rangy": "0.0.32",
+    "@types/uuid": "^3.4.5",
+    "@typescript-eslint/eslint-plugin": "^1.12.0",
+    "@typescript-eslint/parser": "^1.12.0",
+    "eslint": "^6.0.1",
+    "typescript": "^3.5.3"
   }
 }
