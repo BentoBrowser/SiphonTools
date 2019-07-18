@@ -1,4 +1,5 @@
 import BaseAnnotation, {SerializedAnnotation} from './base_annotation'
+// @ts-ignore
 import XPath from 'xpath-dom'
 import {uniq} from 'lodash'
 
@@ -163,7 +164,7 @@ export default class AnchoredAnnotation extends BaseAnnotation {
                 }
                 return true
             })
-            while((filteredNodes.length < 1 || filteredNodes.filter((e): boolean => e.style.display.indexOf("inline") >= 0).length > 0 )
+            while((filteredNodes.length < 1 || filteredNodes.filter((e): boolean => (e.style.display || "").indexOf("inline") >= 0).length > 0 )
              && threshold > 0.5) { //So while we have a no good matching nodes OR those nodes are only inline elements
                 // And we're below our threshold, we keep expanding our search radius (aka fuzziness of overlapping area of intersection + area)
                 filteredNodes = touchingNodes.filter((node): boolean => node.intersection / node.areaChild >= threshold)

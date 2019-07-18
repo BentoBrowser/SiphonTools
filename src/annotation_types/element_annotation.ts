@@ -1,4 +1,5 @@
 import AnchoredAnnotation, {AnchoredSerializedAnnotation, Dimensions} from './anchored_annotation'
+// @ts-ignore
 import XPath from 'xpath-dom'
 
 export interface ElementSerializedAnnotation extends AnchoredSerializedAnnotation {

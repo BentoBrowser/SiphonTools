@@ -5,11 +5,25 @@ const CLASS_THRESHOLD = 0.5
 const MIN_LIST_LENGTH = 3
 const IGNORE_TAGS = ["SCRIPT", "STYLE"]
 
+
+function union(elements: Element[]): {left: number; right: number; top: number; bottom: number} {
+    let [left, right, top, bottom] = [Infinity,-Infinity,Infinity,-Infinity]
+    elements.forEach((item): void => {
+        let rect = item.getBoundingClientRect()
+        left = Math.min(left, rect.left)
+        right = Math.max(right, rect.right)
+        top = Math.min(top, rect.top)
+        bottom = Math.max(bottom, rect.bottom)
+    })
+    return {left, right, top, bottom}
+}
+
+
 function findLists(node: Element): Element[][] {
     //From this node, determine if we have any nice "groupings of children"
     //This is a more "find clusters of similar elements and try to stick them together"
-    let lists = [];
-    let childrenByTag = new Map()
+    let lists: Element[][] = [];
+    let childrenByTag = new Map<string, Element[]>()
     let children = Array.from(node.children)
     children.forEach(child => {
         if (IGNORE_TAGS.includes(child.tagName)) {
@@ -19,12 +33,12 @@ function findLists(node: Element): Element[][] {
         if (!childrenByTag.get(child.tagName)) {
             childrenByTag.set(child.tagName, [])
         }
-        childrenByTag.get(child.tagName).push(child)
+        (childrenByTag.get(child.tagName) as Element[]).push(child)
     })
 
 
 
-    var tagClusters = []
+    var tagClusters: Element[][] = []
 
     childrenByTag.forEach((children, tag) => {
     //Ignore any tags that are less than 5
@@ -62,9 +76,9 @@ function findLists(node: Element): Element[][] {
     tagClusters = tagClusters.filter(cluster => cluster.length > MIN_LIST_LENGTH)
 
     //Finally, attempt to rearrange the items (in DOM order) from our clusters into proper list item groupings
-    var listItems = []
-    var startCluster = null
-    var currentItem = []
+    var listItems: Element[][] = []
+    var startCluster: Element[] | null = null
+    var currentItem:  Element[] = []
 
     for(let j = children.length - 1; j >= 0; j--) {
         let child = children[j]
@@ -92,25 +106,29 @@ function findLists(node: Element): Element[][] {
 
     //Not sure if we should -- but standardize length
     //We'll also ignore certain tags for our length computation
-    let ignoredLength = (group) => {
+    let ignoredLength = (group: Element[]) => {
         return group.filter(child => !["BR", "WBR"].includes(child.tagName)).length
     }
 
-    let lengthCounts = {}
+    let lengthCounts: {[key: number]: number} = {}
     listItems.forEach(group => {
         let length = ignoredLength(group)
+        //@ts-ignore
         lengthCounts[length] = lengthCounts[length] || []
         lengthCounts[length]++
     })
     let idealLength = -1
     let idealLengthCount = -1
     Object.keys(lengthCounts).forEach(length => {
+        //@ts-ignore
         if (lengthCounts[length] > idealLengthCount) {
+            //@ts-ignore
             idealLength = length
+            //@ts-ignore
             idealLengthCount = lengthCounts[length]
         }
     })
-    listItems = listItems.filter(group => ignoredLength(group) == parseInt(idealLength))
+    listItems = listItems.filter(group => ignoredLength(group) == parseInt(""+idealLength))
 
     //Try and filter out list items based on their actual DOM size of the elements
     if (listItems.length) {
@@ -120,7 +138,7 @@ function findLists(node: Element): Element[][] {
 
         let area = (right - left) * (bottom - top)
         if (area > 10000) { //If the area is bigger than the area of a 100 * 100px square, we include this list
-            lists.push(listItems)
+            lists.push(listItems[0])
         }
     }
 
@@ -131,28 +149,17 @@ function findLists(node: Element): Element[][] {
     return lists
 }
 
-function union(elements: Element[]): {left: number; right: number; top: number; bottom: number} {
-    let [left, right, top, bottom] = [Infinity,-Infinity,Infinity,-Infinity]
-    elements.forEach((item): void => {
-        let rect = item.getBoundingClientRect()
-        left = Math.min(left, rect.left)
-        right = Math.max(right, rect.right)
-        top = Math.min(top, rect.top)
-        bottom = Math.max(bottom, rect.bottom)
-    })
-    return {left, right, top, bottom}
-}
+export default function ListAutoSelector({trigger, onComplete, onUpdate}: {trigger: (state: SelectionState) => boolean;
+    onComplete: (list: Element, boxes: HTMLDivElement[]) => void; onUpdate: (list: Element, boxes: HTMLDivElement[]) => void;}): Selector {
+    var boundingBoxes: HTMLDivElement[] = []
+    var lists: Element[][] | null = null
+    var selectedItems: number[][] = []
+    var highlightedElement: HTMLElement | null = null
 
-export default function ListAutoSelector({trigger, onComplete, onUpdate}): Selector {
-    var boundingBoxes = []
-    var lists = null
-    var selectedItems = []
-    var highlightedElement = null
-
-    trigger = trigger || function({currentKey}) {
+    trigger = trigger || function({currentKey}: SelectionState): boolean {
         return currentKey && currentKey.key == "Shift"
-           && ["INPUT", "TEXTAREA"].indexOf(currentKey.target.nodeName) < 0
-           && !currentKey.target.isContentEditable
+        // @ts-ignore
+        && (!currentKey.target || (["INPUT", "TEXTAREA"].indexOf(currentKey.target.nodeName) < 0 && !currentKey.target.isContentEditable))
     }
 
     return {
@@ -160,40 +167,47 @@ export default function ListAutoSelector({trigger, onComplete, onUpdate}): Selec
             return trigger(e)
         },
         onSelectionChange: function({causingEvent, mouseDown, mousePosition}): void {
-            if (causingEvent == "mousedown" && mouseDown.target && mouseDown.target.className.includes("siphon-list-item")) {
+            if (causingEvent == "mousedown" && mouseDown && mouseDown.target && (mouseDown.target as HTMLElement).className.includes("siphon-list-item")) {
                 mouseDown.preventDefault()
                 mouseDown.stopPropagation()
-                let listIdx = parseInt(mouseDown.target.className.split(" ").find(name => name.includes("siphon-list_")).split("_")[1])
-                let itemIdx = parseInt(mouseDown.target.className.split(" ").find(name => name.includes("siphon-list-item_")).split("_")[1])
+                //@ts-ignore
+                let listIdx = parseInt((mouseDown.target as HTMLElement).className.split(" ").find(name => name.includes("siphon-list_")).split("_")[1])
+                //@ts-ignore
+                let itemIdx = parseInt((mouseDown.target as HTMLElement).className.split(" ").find(name => name.includes("siphon-list-item_")).split("_")[1])
 
                 let idx = selectedItems.findIndex(item => item[0] == listIdx && item[1] == itemIdx)
                 if (idx > -1) {
                     selectedItems.splice(idx, 1)
-                    mouseDown.target.style.backgroundColor = '#84e2f199'
+                    //@ts-ignore
+                    mouseDown.target.backgroundColor = '#84e2f199'
+                    //@ts-ignore
                     mouseDown.target.classList.remove("siphon-included-item")
                 } else {
                     selectedItems.push([listIdx, itemIdx])
+                    //@ts-ignore
                     mouseDown.target.style.backgroundColor = '#9af58999'
+                    //@ts-ignore
                     mouseDown.target.classList.add("siphon-included-item")
                 }
 
-                let remainingBoxes = []
+                let remainingBoxes: HTMLDivElement[] = []
                 boundingBoxes.forEach(box => {
                     if(box.className.includes("siphon-included-item")) {
                         remainingBoxes.push(box)
                     }
                 })
                 if (onUpdate && selectedItems.length) {
+                    //@ts-ignore
                     onUpdate(selectedItems.map(item => lists[item[0]][item[1]]), remainingBoxes)
                 }
-            } else if (highlightedElement != mousePosition.target && mousePosition.target.className.includes("siphon-list-item")){
+            } else if (mousePosition && highlightedElement != mousePosition.target && (mousePosition.target as HTMLElement).className.includes("siphon-list-item")){
                 mousePosition.preventDefault()
                 mousePosition.stopPropagation()
 
                 if (highlightedElement && !highlightedElement.className.includes("siphon-included-item")) {
                     highlightedElement.style.backgroundColor = ''
                 }
-                highlightedElement = mousePosition.target
+                highlightedElement = mousePosition.target as HTMLElement
                 if (!highlightedElement.className.includes("siphon-included-item")) {
                     highlightedElement.style.backgroundColor = '#84e2f199'
                 }
@@ -210,6 +224,7 @@ export default function ListAutoSelector({trigger, onComplete, onUpdate}): Selec
             let xOffset = window.pageXOffset
             let rects = lists.map((list) => {
                 return list.map((listItem) => {
+                    //@ts-ignore
                     return union(listItem)
                 })
             })
@@ -224,6 +239,7 @@ export default function ListAutoSelector({trigger, onComplete, onUpdate}): Selec
                     bounding.style.top = `${rect.top + yOffset}px`;
                     bounding.style.left = `${rect.left + xOffset}px`;
                     bounding.style.zIndex = "889944"
+                    //@ts-ignore
                     bounding.style.pointer = 'pointer'
                     bounding.style.border = '2px dashed lightgray'
                     bounding.className = `siphon-list-item siphon-list_${listIdx} siphon-list-item_${itemIdx}`
@@ -232,7 +248,7 @@ export default function ListAutoSelector({trigger, onComplete, onUpdate}): Selec
             })
         },
         onSelectionEnd: function(e): void{
-            let remainingBoxes = []
+            let remainingBoxes: HTMLDivElement[] = []
             boundingBoxes.forEach(box => {
                 if(!box.className.includes("siphon-included-item")) {
                     box.remove()
@@ -241,7 +257,8 @@ export default function ListAutoSelector({trigger, onComplete, onUpdate}): Selec
                 }
             })
             boundingBoxes = []
-            if (onComplete)
+            if (onComplete && lists)
+            // @ts-ignore
                 onComplete(selectedItems.map(item => lists[item[0]][item[1]]), remainingBoxes)
         }
     }

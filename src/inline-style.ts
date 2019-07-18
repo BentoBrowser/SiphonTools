@@ -17,7 +17,7 @@ function randomCSSClass(): string {
 }
 
 //Partially from https://github.com/lukehorvat/computed-style-to-inline-style
-export function computedStyleToInlineStyle(element: HTMLElement, options: {recursive?: boolean; clone?: false | HTMLElement; properties?: false | string[]}): {element: HTMLElement; styleInfo: string} {
+export function computedStyleToInlineStyle(element: HTMLElement, options: {recursive?: boolean; clone?: boolean | HTMLElement; properties?: false | string[]}): {element: HTMLElement; styleInfo: string} {
 
     let {recursive = true, clone = false, properties = false} = options;
     if (!element) {
@@ -34,7 +34,9 @@ export function computedStyleToInlineStyle(element: HTMLElement, options: {recur
     if (recursive) {
         let children: HTMLCollection | HTMLElement[] = element.children
         //TODO cool iframe stuff here?
+        // @ts-ignore
         if (element.tagName == "IFRAME" && element.contentDocument && clone) {
+        // @ts-ignore
             children = [element.contentDocument.body]
         }
 
@@ -96,7 +98,9 @@ export function computedStyleToInlineStyle(element: HTMLElement, options: {recur
             var value = computedStyle.getPropertyValue(property);
 
             //Only save values that aren't the initial ones for the element
+            // @ts-ignore
             if ((initialValues as {[key: string]: string})[element.tagName.toLowerCase()] &&
+            // @ts-ignore
             (initialValues as {[key: string]: string})[element.tagName.toLowerCase()][property] != value) {
                 // let urlMatch = value.match(/url\("(.*)"\)/)
                 // if (urlMatch) {
@@ -106,11 +110,15 @@ export function computedStyleToInlineStyle(element: HTMLElement, options: {recur
                 //   } catch(e) {}
                 // }
                 if (clone) { //Clear the styles first because sometimes they won't update with their resolved values
+                    // @ts-ignore
                     clone.style[property] = "";
+                    // @ts-ignore
                     clone.style[property] = value;
                 }
                 else {
+                    // @ts-ignore
                     element.style[property] = "";
+                    // @ts-ignore
                     element.style[property] = value;
                 }
             }

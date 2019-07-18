@@ -1,5 +1,8 @@
+// @ts-ignore
 import rangyClassApplier from 'rangy/lib/rangy-classapplier';
+// @ts-ignore
 import rangyTextRange from 'rangy/lib/rangy-textrange'
+// @ts-ignore
 import rangy from 'rangy/lib/rangy-core.js';
 
 import SelectionAnnotation, {SelectionSerializedAnnotation} from './selection_annotation'

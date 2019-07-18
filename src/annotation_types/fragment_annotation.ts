@@ -1,4 +1,5 @@
 import AnchoredAnnotation, {Dimensions, AnchoredSerializedAnnotation} from './anchored_annotation'
+// @ts-ignore
 import XPath from 'xpath-dom'
 import {compact, sortBy, first} from 'lodash'
 import {computedStyleToInlineStyle, resolveHangingTags} from '../inline-style'
@@ -49,7 +50,7 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
 
         //Inline the styles to html
         let resolvedStyles = ""
-        let inlineNodes = this.nodes.map((node): Element => {
+        let inlineNodes = this.nodes.map((node): HTMLElement => {
             let {element, styleInfo} = computedStyleToInlineStyle(node, {recursive: true, clone: true})
             resolvedStyles += styleInfo
             return element
@@ -63,7 +64,7 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
             inlineNodes[idx].style.backgroundColor = getBGColor(node)
         })
 
-        let {cloneNodes: resolved, style} = resolveHangingTags(this.nodes, inlineNodes.slice(0));
+        let {cloneNodes: resolved, style} = resolveHangingTags(this.nodes, inlineNodes.slice(0) as HTMLElement[]);
         resolvedStyles += style
         this.html = resolved.map((elem): string => elem.outerHTML);
         resolvedStyles = resolvedStyles.trim()

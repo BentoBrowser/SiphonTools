@@ -6,6 +6,7 @@ export default function HighlightSelector({onTrigger = (range: Range, e: Selecti
     return {
         conditions: function(e): boolean {
             return e.mouseDown && conditions(e) &&
+            // @ts-ignore
             (!e.mouseDown.target || (["INPUT", "TEXTAREA"].indexOf(e.mouseDown.target.nodeName) < 0 && !e.mouseDown.target.isContentEditable))
         },
         onSelectionEnd: function(e): void {

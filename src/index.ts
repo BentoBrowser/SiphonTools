@@ -13,7 +13,7 @@ import VideoAnnotation from './annotation_types/video_annotation'
 import PointAnnotation from './annotation_types/point_annotation'
 import Screenshot from './annotation_types/screenshot.js'
 
-import EventListener from './event_listener'
+import EventListener, {SelectionState} from './event_listener'
 import Store from './store'
 
 import ClickElementSelector from './selectors/click_element_selector'
@@ -23,6 +23,7 @@ import HoverElementSelector from './selectors/hover_element_selector'
 import SnippetSelector from './selectors/snippet_selector'
 import ElementSelector from './selectors/element_selector'
 import ListAutoSelector from './selectors/list_auto_selector'
+import Selector from './selectors/selector'
 
 /* An annotation map looks like the following:
 {
@@ -49,26 +50,26 @@ import ListAutoSelector from './selectors/list_auto_selector'
 */
 
 export default {
-  initializeSelectors: function(selectors) {
-    EventListener.init()
-    EventListener.selectors = selectors
-  },
-  tearDown: function() {
-    EventListener.teardown()
-  },
-  getSelectionState: function() {
-    return EventListener.getSelectionState()
-  },
-  disable: function() {
-    EventListener.disable()
-  },
-  enable: function() {
-    EventListener.enable()
-  }
+    initializeSelectors: function(selectors: Selector[]): void {
+        EventListener.init()
+        EventListener.selectors = selectors
+    },
+    tearDown: function(): void {
+        EventListener.teardown()
+    },
+    getSelectionState: function(): SelectionState  {
+        return EventListener.getSelectionState()
+    },
+    disable: function(): void  {
+        EventListener.disable()
+    },
+    enable: function(): void  {
+        EventListener.enable()
+    }
 }
 
 export {AnchoredAnnotation, BaseAnnotation, ElementAnnotation, FragmentAnnotation, SelectionAnnotation,
-        Highlight, ImageAnnotation, LinkAnnotation, Snippet, VideoAnnotation, Screenshot, PointAnnotation,
-        ClickElementSelector, DoubleTapSelector, HighlightSelector, HoverElementSelector, SnippetSelector, ElementSelector, ListAutoSelector,
-        Store
-      }
+    Highlight, ImageAnnotation, LinkAnnotation, Snippet, VideoAnnotation, Screenshot, PointAnnotation,
+    ClickElementSelector, DoubleTapSelector, HighlightSelector, HoverElementSelector, SnippetSelector, ElementSelector, ListAutoSelector,
+    Store
+}

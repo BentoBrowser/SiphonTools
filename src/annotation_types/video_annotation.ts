@@ -36,7 +36,8 @@ export default class Video extends ElementAnnotation{
             this.provider = "youtube"
             this.thumbnail = `https://img.youtube.com/vi/${this.videoId}/1.jpg`
         } else if (url.host.endsWith("dailymotion.com") && url.pathname.match(/\/video\/([a-z0-9]+)/)) {
-            this.videoId = url.pathname.match(/\/video\/([a-z0-9]+)/)[1]
+            let match = url.pathname.match(/\/video\/([a-z0-9]+)/)
+            this.videoId = (match)? match[1]:""
             this.provider = "dailymotion"
             this.thumbnail = `https://www.dailymotion.com/thumbnail/video/${this.videoId}`
         } else if (url.host.endsWith("vimeo.com") && url.pathname.match(/([0-9]+)$/)) {

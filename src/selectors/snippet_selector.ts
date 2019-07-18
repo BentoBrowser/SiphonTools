@@ -40,8 +40,10 @@ export default function SnippetSelector({onTrigger = (captureWindow: HTMLDivElem
             }
             document.head.appendChild(styleElem);
             var styleSheet = styleElem.sheet;
-            if (styleSheet)
+            if (styleSheet) {
+                // @ts-ignore
                 styleSheet.insertRule('::selection { background-color: inherit  !important; color: inherit  !important;}');
+            }
             onStart(e)
         },
         onSelectionChange: function(e): void {

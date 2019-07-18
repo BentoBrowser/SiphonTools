@@ -1,9 +1,13 @@
+// @ts-ignore
 import rangyClassApplier from 'rangy/lib/rangy-classapplier';
+// @ts-ignore
 import rangyTextRange from 'rangy/lib/rangy-textrange'
+// @ts-ignore
 import rangy from 'rangy/lib/rangy-core.js';
 
 import {computedStyleToInlineStyle} from '../inline-style'
 import AnchoredAnnotation, {Dimensions, AnchoredSerializedAnnotation} from './anchored_annotation'
+// @ts-ignore
 import * as XPath from 'xpath-range'
 
 export interface Selection {
@@ -38,7 +42,7 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
         this.selection = XPath.fromRange(this.range, window.document.body);
 
         //Get the actual HTML
-        this.range.getNodes([1]).forEach((node: Element) => computedStyleToInlineStyle(node, {recursive: true}).element);
+        this.range.getNodes([1]).forEach((node: Element) => computedStyleToInlineStyle(node as HTMLElement, {recursive: true}).element);
         let elem = document.createElement('div');
         elem.appendChild(this.range.cloneContents())
         this.html = elem.innerHTML;
@@ -51,10 +55,12 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
         if (context.startOffset <= 40) {
             context.setStartBefore(startContainer);
         } else {
+            // @ts-ignore
             context.setStart(startContainer, startContainer.startOffset - 40);
         }
-
+        // @ts-ignore
         if (context.endContainer.length) {
+        // @ts-ignore
             if (context.endContainer.length - context.endOffset <= 40) {
                 context.setEndAfter(endContainer);
             } else {

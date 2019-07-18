@@ -3,10 +3,12 @@ import Selector from './selector'
 
 var defaultTrigger = function({currentKey}: SelectionState): boolean {
     return currentKey && currentKey.key == "Shift"
+    // @ts-ignore
          && (!currentKey.target || (["INPUT", "TEXTAREA"].indexOf(currentKey.target.nodeName) < 0 && !currentKey.target.isContentEditable))
 }
 
-export default function ElementSelector({trigger = defaultTrigger, onComplete, onUpdate, ignoreElements } = {}): Selector {
+//@ts-ignore
+export default function ElementSelector({trigger = defaultTrigger, onComplete = (elems: HTMLElement[], boxes: HTMLElement[], e: SelectionState) => {}, onUpdate= (elems: HTMLElement[], boxes: HTMLElement[]) => {}, ignoreElements} = {}): Selector {
     var saveElements: HTMLElement[] = []
     var highlightBoxes: HTMLElement[] = []
 
@@ -50,32 +52,34 @@ export default function ElementSelector({trigger = defaultTrigger, onComplete, o
                 if (onUpdate && saveElements.length) {
                     onUpdate(saveElements, highlightBoxes)
                 }
-            } else if (causingEvent == "mouseup" &&  mouseUp.target && mouseUp.target.className.includes("siphon-element-selector")) {
+            } else if (causingEvent == "mouseup" && mouseUp && mouseUp.target && (mouseUp.target as HTMLElement).className.includes("siphon-element-selector")) {
 
-                let boxIdx = highlightBoxes.indexOf(mouseUp.target)
+                let boxIdx = highlightBoxes.indexOf(mouseUp.target as HTMLElement)
                 if (boxIdx >= 0) {
                     highlightBoxes.splice(boxIdx, 1)
                     saveElements.splice(boxIdx, 1)
+                    //@ts-ignore
                     mouseUp.target.remove()
 
                     if (onUpdate && saveElements.length) {
                         onUpdate(saveElements, highlightBoxes)
                     }
                 }
-            } else if (highlightedElement != mousePosition.target){
-                if (mousePosition && mousePosition.target && !mousePosition.target.matches(ignoreElements)
-          && !mousePosition.target.className.includes("siphon-element-selector")) {
+            } else if (mousePosition && highlightedElement != mousePosition.target){
+                if (mousePosition && mousePosition.target && !(mousePosition.target as HTMLElement).matches(ignoreElements)
+          && !(mousePosition.target as HTMLElement).className.includes("siphon-element-selector")) {
                     if (!highlightedElement) {
                         highlightBox = document.body.appendChild(document.createElement('div'));
                         highlightBox.style.position = "absolute"
                         highlightBox.style.backgroundColor = '#84e2f199'
                         highlightBox.style.zIndex = "889944"
                         highlightBox.style.pointerEvents = 'none'
+                        //@ts-ignore
                         highlightBox.style.pointer = 'pointer'
                         highlightBox.className = "siphon-element-selector"
                     }
                     if (highlightBox) {
-                        let rect = mousePosition.target.getBoundingClientRect()
+                        let rect = (mousePosition.target as HTMLElement).getBoundingClientRect()
                         let x = rect.left + window.scrollX,
                             y = rect.top + window.scrollY;
 
