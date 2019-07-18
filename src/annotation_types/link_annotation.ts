@@ -1,45 +1,51 @@
-import ElementAnnotation from './element_annotation'
+import ElementAnnotation, {ElementSerializedAnnotation} from './element_annotation'
+
+export interface LinkSerializedAnnotation extends ElementSerializedAnnotation {
+    href: string;
+}
 
 export default class Link extends ElementAnnotation{
 
-  constructor(linkNode) {
-    super(linkNode);
-    this.href = linkNode.href
-    this.allReferences = Array.from(document.querySelectorAll('a')).filter(elem => elem.href == this.href)
-    this.text = linkNode.innerText
-  }
+    public href: string
+    public allReferences: Element[]
 
-  serialize() {
-    let save = super.serialize()
-    Object.assign(save, {href: this.href})
-    return save;
-  }
-
-  deserialize(serialized) {
-    super.deserialize(serialized)
-    this.href = serialized.href
-  }
-
-  rehydrate() {
-    super.rehydrate()
-    this.allReferences = Array.from(document.querySelectorAll('a')).filter(elem => elem.href == this.href)
-    if (!this.element) {
-      this.element = this.allReferences[0]
+    public constructor(linkNode: HTMLLinkElement) {
+        super(linkNode);
+        this.href = linkNode.href
+        this.allReferences = Array.from(document.querySelectorAll('a')).filter((elem): boolean => elem.href == this.href)
+        this.text = linkNode.innerText
     }
-    return !!this.element
-  }
 
-  mark() {
-    this.allReferences.forEach(ref => {
-      this.element.classList.add(`siphon-link`)
-      this.element.classList.add(`siphon-annotation-${this.key}`);
-    })
-  }
+    public serialize(): LinkSerializedAnnotation {
+        let save = super.serialize()
+        return Object.assign(save, {href: this.href})
+    }
 
-  unmark() {
-    this.allReferences.forEach(ref => {
-      this.element.classList.remove(`siphon-link`)
-      this.element.classList.remove(`siphon-annotation-${this.key}`)
-    })
-  }
+    public deserialize(serialized: LinkSerializedAnnotation): void {
+        super.deserialize(serialized)
+        this.href = serialized.href
+    }
+
+    public rehydrate(): boolean {
+        super.rehydrate()
+        this.allReferences = Array.from(document.querySelectorAll('a')).filter((elem): boolean => elem.href == this.href)
+        if (!this.element) {
+            this.element = this.allReferences[0] as HTMLElement
+        }
+        return !!this.element
+    }
+
+    public mark(): void {
+        this.allReferences.forEach((): void => {
+            this.element.classList.add(`siphon-link`)
+            this.element.classList.add(`siphon-annotation-${this.key}`);
+        })
+    }
+
+    public unmark(): void {
+        this.allReferences.forEach((): void  => {
+            this.element.classList.remove(`siphon-link`)
+            this.element.classList.remove(`siphon-annotation-${this.key}`)
+        })
+    }
 }
