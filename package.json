@@ -2,7 +2,8 @@
   "name": "siphon-tools",
   "version": "1.0.3",
   "description": "A set of tools for annotating the web with Javascript",
-  "main": "lib/index.js",
+  "main": "lib/index",
+  "typings":"lib/index",
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
