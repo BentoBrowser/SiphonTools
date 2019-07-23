@@ -10,7 +10,7 @@ export default class Snippet extends RectangularAnnotation {
     }
 
     public mark(): void {
-        this.nodes.forEach((): void => {
+        this.nodes.forEach((elem): void => {
             elem.classList.add(`siphon-snippet`)
             elem.classList.add(`siphon-annotation-${this.key}`);
         })
@@ -18,7 +18,7 @@ export default class Snippet extends RectangularAnnotation {
 
     public unmark(): void {
         super.unmark();
-        this.nodes.forEach((): void  => {
+        this.nodes.forEach((elem): void  => {
             elem.classList.remove(`siphon-snippet`)
             elem.classList.remove(`siphon-annotation-${this.key}`);
         })

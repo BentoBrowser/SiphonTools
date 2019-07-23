@@ -4,6 +4,7 @@ import BaseAnnotation from './annotation_types/base_annotation'
 import ElementAnnotation, {ElementSerializedAnnotation} from './annotation_types/element_annotation'
 import FragmentAnnotation, {FragmentSerializedAnnotation} from './annotation_types/fragment_annotation'
 import SelectionAnnotation, {SelectionSerializedAnnotation} from './annotation_types/selection_annotation'
+import {RectangularSerializedAnnotation} from './annotation_types/rectangular_annotation'
 
 import Highlight from './annotation_types/highlight'
 import ImageAnnotation, {ImageSerializedAnnotation} from './annotation_types/image_annotation'
@@ -68,7 +69,7 @@ export default {
     }
 }
 
-export {AnchoredSerializedAnnotation, ElementSerializedAnnotation, FragmentSerializedAnnotation, SelectionSerializedAnnotation, ImageSerializedAnnotation, LinkSerializedAnnotation, VideoSerializedAnnotation}
+export {AnchoredSerializedAnnotation, ElementSerializedAnnotation, FragmentSerializedAnnotation, SelectionSerializedAnnotation, RectangularSerializedAnnotation, ImageSerializedAnnotation, LinkSerializedAnnotation, VideoSerializedAnnotation}
 export {AnchoredAnnotation, BaseAnnotation, ElementAnnotation, FragmentAnnotation, SelectionAnnotation,
     Highlight, ImageAnnotation, LinkAnnotation, Snippet, VideoAnnotation, Screenshot, PointAnnotation,
     ClickElementSelector, DoubleTapSelector, HighlightSelector, HoverElementSelector, SnippetSelector, ElementSelector, ListAutoSelector,
