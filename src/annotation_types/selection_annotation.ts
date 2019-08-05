@@ -75,12 +75,20 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
         let rect = range.getBoundingClientRect();
         this.initialDimensions = {
             width: rect.width,
-            height: rect.height
+            height: rect.height,
+            top: rect.top,
+            left: rect.left,
+            right: rect.right,
+            bottom: rect.bottom
         }
         rect = context.getBoundingClientRect()
         this.renderedDimensions = {
             width: rect.width,
-            height: rect.height
+            height: rect.height,
+            top: rect.top,
+            left: rect.left,
+            right: rect.right,
+            bottom: rect.bottom
         }
         this.refreshAnchorCoordinates()
     }
