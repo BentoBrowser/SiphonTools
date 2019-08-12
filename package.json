@@ -1,6 +1,6 @@
 {
   "name": "siphon-tools",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "A set of tools for annotating the web with Javascript",
   "main": "lib/index",
   "typings":"lib/index",
