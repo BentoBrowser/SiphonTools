@@ -36,7 +36,7 @@ export default class SelectionAnnotation extends AnchoredAnnotation {
     public constructor(range: Range) {
         super(range.commonAncestorContainer as HTMLElement);
         this.range = new rangy.WrappedRange(range);
-        this.text = this.range.toString();
+        this.text = this.range.toString().trim();
         this.selection = XPath.fromRange(this.range, window.document.body);
 
         //Get the actual HTML
