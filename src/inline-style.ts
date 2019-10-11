@@ -1,4 +1,3 @@
-import {last} from "lodash"
 import initialValues from './base_css/initialValues.json'
 
 function jsNameToCssName(name: string): string
@@ -14,6 +13,10 @@ function randomCSSClass(): string {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
+}
+
+function last<T>(arr: T[]): T {
+    return arr[arr.length - 1]
 }
 
 //Partially from https://github.com/lukehorvat/computed-style-to-inline-style

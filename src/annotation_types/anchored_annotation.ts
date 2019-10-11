@@ -1,7 +1,6 @@
 import BaseAnnotation, {SerializedAnnotation} from './base_annotation'
 // @ts-ignore
 import XPath from 'xpath-dom'
-import {uniq} from 'lodash'
 
 function visible( elem: HTMLElement ): boolean {
     return !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
@@ -171,7 +170,7 @@ export default class AnchoredAnnotation extends BaseAnnotation {
                 threshold -= 0.05;
             }
         }
-        return uniq(filteredNodes.map((node): HTMLElement => node.elem as HTMLElement));
+        return [...new Set(filteredNodes.map((node): HTMLElement => node.elem as HTMLElement))];
     }
 
 

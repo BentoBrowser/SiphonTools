@@ -1,8 +1,11 @@
 import AnchoredAnnotation, {Dimensions, AnchoredSerializedAnnotation} from './anchored_annotation'
 // @ts-ignore
 import XPath from 'xpath-dom'
-import {compact, sortBy, first} from 'lodash'
 import {computedStyleToInlineStyle, resolveHangingTags} from '../inline-style'
+
+const sortBy = (key: string): (a: any, b: any) => number => {
+    return (a: any, b: any): number => (a[key] > b[key]) ? 1 : ((b[key] > a[key]) ? -1 : 0);
+};
 
 function getBGColor(el: Element): string | null {
     var s = getComputedStyle(el),
@@ -80,7 +83,7 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
 
             headerNodes.push(...node.querySelectorAll('h1,h2,h3,h4,h5.h6'))
         })
-        let headerNode = first(sortBy(headerNodes, 'tagName'));
+        let headerNode = headerNodes.concat().sort(sortBy('tagName'))[0];
         this.subTitle = (headerNode)? (headerNode as HTMLElement).innerText : null;
     }
 
@@ -99,7 +102,7 @@ export default class FragmentAnnotation extends AnchoredAnnotation {
     }
 
     public rehydrate(): boolean {
-        this.nodes = compact(this.paths.map((path): HTMLElement => XPath.find(path, document.body)));
+        this.nodes = this.paths.map((path): HTMLElement => XPath.find(path, document.body)).filter(Boolean);
         this.anchor = this.nodes[0]
         return this.nodes.length === this.paths.length;
     }
